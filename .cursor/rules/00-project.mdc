@@ -1,0 +1,37 @@
+---
+description: Core project standards — brain-first, self-documenting, lean changes
+alwaysApply: true
+---
+
+# AI-Business-OS Project Rules
+
+## Start Here
+
+Before any work, read [PROJECT_BRAIN.md](../../PROJECT_BRAIN.md) and follow [PROJECT_RULES.md](../../PROJECT_RULES.md).
+Agent details: [AI/AGENT.md](../../AI/AGENT.md).
+
+## Self-Documentation (required)
+
+Every implementation must update docs when applicable:
+
+- **Status changes** → [PROJECT_BRAIN.md](../../PROJECT_BRAIN.md)
+- **New discoveries** → [LEARNINGS.md](../../LEARNINGS.md)
+- **Architecture decisions** → new file in [adr/](../../adr/) + index in PROJECT_BRAIN
+
+Do not finish a task without updating the relevant docs.
+
+## Implementation
+
+- Minimal scope — solve the task, nothing extra
+- No duplication — one source of truth, link instead of repeat
+- Match existing conventions before introducing patterns
+- Stack changes on 🔒 list in TECH_STACK require an ADR first
+- Check COSTS.md before adding AI calls or paid infra
+- No secrets in repo
+
+## Do Not
+
+- Create README files unless explicitly requested
+- Add placeholder or speculative content
+- Edit accepted ADRs (supersede with new ADR)
+- Edit PROJECT_RULES without explicit human approval
