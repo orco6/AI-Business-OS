@@ -19,20 +19,23 @@
 
 ## Current Architecture
 
-**Status:** Pre-MVP — documentation foundation only. No application code yet.
+**Status:** Pre-MVP — Next.js web app scaffolded with modular monolith folder structure.
 
 ```
-[ Not built ]
-  User → (future) Web App → (future) API → (future) Data + AI Layer
+User → apps/web (Next.js App Router) → (future) services / AI layer → (future) Data
 ```
 
 | Layer | Choice | Notes |
 |-------|--------|-------|
-| Frontend | TBD | See [TECH_STACK.md](./TECH_STACK.md) |
-| Backend / API | TBD | |
-| Database | TBD | |
-| AI providers | TBD | |
+| Frontend | Next.js 16, React 19, TypeScript | `apps/web` — App Router, React Compiler, Tailwind v4 |
+| Backend / API | Next.js Route Handlers (future) | Thin routing in `app/api/` when needed |
+| Database | TBD | See [TECH_STACK.md](./TECH_STACK.md) |
+| AI providers | TBD | Cross-cutting wrappers in `services/` when added |
 | Hosting / CI | TBD | |
+
+**App structure** (`apps/web`): `app/` (routing), `components/` (ui + shared), `features/` (vertical modules), `services/`, `types/`, `lib/`, `hooks/`.
+
+First feature module: `features/onboarding/`.
 
 Next architectural decision should be recorded in [adr/](./adr/).
 
@@ -43,23 +46,27 @@ Next architectural decision should be recorded in [adr/](./adr/).
 | Area | Status |
 |------|--------|
 | Documentation foundation | **Done** |
+| Web app foundation (`apps/web`) | **Done** |
 | Product definition | Not started |
-| Design system | Not started |
-| MVP features | Not started |
+| Design system | In progress (`components/ui/button`, light tokens in `globals.css`) |
+| MVP features | In progress — onboarding step 1 UI at `/onboarding` |
 | Production deployment | Not started |
 
 ---
 
 ## Current Sprint
 
-**Sprint:** Documentation foundation  
-**Goal:** Establish lean, self-documenting project structure for humans and AI agents.  
-**Exit criteria:**
+**Sprint 1:** Project foundation and initial Next.js setup — **Complete**
+
+Exit criteria:
 
 - [x] Root docs created (`PROJECT_BRAIN`, `PROJECT_RULES`, `TECH_STACK`, `COSTS`, `LEARNINGS`)
 - [x] `AI/`, `adr/`, `docs/`, `prompts/`, `.cursor/rules/` in place
-- [ ] First ADR when stack is chosen
-- [ ] First `docs/` entry when local dev setup exists
+- [x] Next.js app at `apps/web` (Next.js 16, React 19, Tailwind v4, React Compiler)
+- [x] Modular monolith folder structure in `apps/web`
+- [x] First feature scaffold: `features/onboarding/`
+
+**Next up:** Wire onboarding step 1 submit flow, define MVP scope, first ADR for core stack choices.
 
 ---
 
@@ -77,11 +84,11 @@ When a decision is made, add a row here and create `adr/NNNN-short-title.md`.
 
 | Priority | Item | Notes |
 |----------|------|-------|
-| P0 | Choose core tech stack | Requires ADR |
+| P0 | Choose core tech stack | Requires ADR — partial choices in `apps/web`; formalize in TECH_STACK |
 | P0 | Define MVP scope (3–5 features max) | Product + UX |
 | P1 | Local development setup | Add `docs/local-development.md` when ready |
 | P1 | AI provider selection & cost model | Update [COSTS.md](./COSTS.md) |
-| P2 | Design system / UX primitives | Prompts in `prompts/ux/` |
+| P2 | Design system / UX primitives | `components/ui/` — prompts in `prompts/ux/` |
 
 ---
 
