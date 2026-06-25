@@ -3,7 +3,7 @@
 > Concrete technology choices and constraints.
 > **Change requires an ADR** for items marked 🔒.
 
-**Status:** Greenfield — stack not yet chosen. First selection must be recorded in [adr/](./adr/).
+**Status:** Partial — frontend and backend frameworks chosen; database planned (MongoDB), not implemented. Formal ADRs pending for 🔒 items.
 
 ---
 
@@ -25,10 +25,11 @@ Before choosing any layer, it must satisfy [PROJECT_RULES.md](./PROJECT_RULES.md
 
 | Layer | Choice | Version | Status |
 |-------|--------|---------|--------|
-| Language (frontend) | TBD | — | Not chosen |
-| Language (backend) | TBD | — | Not chosen |
-| Framework | TBD | — | Not chosen |
-| Database | TBD | — | Not chosen |
+| Language (frontend) | TypeScript | 5.x | Active (`apps/web`) |
+| Language (backend) | C# | — | Active (`apps/api`) |
+| Framework (frontend) | Next.js | 16 | Active (`apps/web`) |
+| Framework (backend) | ASP.NET Core | 8 | Active (`apps/api`) — Backend Foundation started |
+| Database | MongoDB | — | Planned, not implemented |
 | ORM / query | TBD | — | Not chosen |
 | Auth | TBD | — | Not chosen |
 | Hosting (app) | TBD | — | Not chosen |
@@ -73,4 +74,12 @@ Before choosing any layer, it must satisfy [PROJECT_RULES.md](./PROJECT_RULES.md
 
 ## Local Development
 
-Not set up yet. When it is, add [docs/local-development.md](./docs/local-development.md) and update this section with commands only — narrative stays in docs.
+**API** (`apps/api`):
+
+```bash
+dotnet run --project apps/api
+```
+
+Health check: `GET http://localhost:5063/health` (port from `launchSettings.json`).
+
+Full monorepo setup: add [docs/local-development.md](./docs/local-development.md) when ready.

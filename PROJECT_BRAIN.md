@@ -19,17 +19,17 @@
 
 ## Current Architecture
 
-**Status:** Pre-MVP — Next.js web app scaffolded with modular monolith folder structure.
+**Status:** Pre-MVP — Next.js web app and ASP.NET Core API scaffolded.
 
 ```
-User → apps/web (Next.js App Router) → (future) services / AI layer → (future) Data
+User → apps/web (Next.js App Router) → apps/api (ASP.NET Core 8) → (future) MongoDB
 ```
 
 | Layer | Choice | Notes |
 |-------|--------|-------|
 | Frontend | Next.js 16, React 19, TypeScript | `apps/web` — App Router, React Compiler, Tailwind v4 |
-| Backend / API | Next.js Route Handlers (future) | Thin routing in `app/api/` when needed |
-| Database | TBD | See [TECH_STACK.md](./TECH_STACK.md) |
+| Backend / API | ASP.NET Core 8 | `apps/api` — `GET /health`; Swagger in Development |
+| Database | MongoDB (planned) | Not implemented yet — see [TECH_STACK.md](./TECH_STACK.md) |
 | AI providers | TBD | Cross-cutting wrappers in `services/` when added |
 | Hosting / CI | TBD | |
 
@@ -47,6 +47,7 @@ Next architectural decision should be recorded in [adr/](./adr/).
 |------|--------|
 | Documentation foundation | **Done** |
 | Web app foundation (`apps/web`) | **Done** |
+| Backend foundation (`apps/api`) | **In progress** — template removed, health endpoint, `.gitignore` |
 | Product definition | Not started |
 | Design system | In progress (`components/ui/button`, light tokens in `globals.css`) |
 | MVP features | In progress — onboarding step 1 UI at `/onboarding` |
@@ -56,7 +57,7 @@ Next architectural decision should be recorded in [adr/](./adr/).
 
 ## Current Sprint
 
-**Sprint 1:** Project foundation and initial Next.js setup — **Complete**
+**Sprint 1:** Project foundation — web app **complete**; backend foundation **in progress**
 
 Exit criteria:
 
@@ -65,8 +66,10 @@ Exit criteria:
 - [x] Next.js app at `apps/web` (Next.js 16, React 19, Tailwind v4, React Compiler)
 - [x] Modular monolith folder structure in `apps/web`
 - [x] First feature scaffold: `features/onboarding/`
+- [x] ASP.NET Core 8 API at `apps/api` — demo removed, `GET /health`, Swagger in Development
+- [ ] MongoDB wiring (planned, not started)
 
-**Next up:** Wire onboarding step 1 submit flow, define MVP scope, first ADR for core stack choices.
+**Next up:** Complete backend foundation (conventions, CORS), wire onboarding step 1 submit flow, ADR for MongoDB.
 
 ---
 
