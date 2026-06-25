@@ -26,13 +26,35 @@ function ArrowStartIcon({ className }: { className?: string }) {
 
 export function OnboardingScreen() {
   const [businessName, setBusinessName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const isValid = businessName.trim().length > 0;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!isValid) return;
-    console.log(businessName);
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:5063/api/onboarding/start",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ businessName }),
+        },
+      );
+
+      if (response.status === 200) {
+        console.log("success");
+      } else {
+        console.log("error");
+      }
+    } catch {
+      console.log("error");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -97,11 +119,17 @@ export function OnboardingScreen() {
               <Button
                 type="submit"
                 size="lg"
-                disabled={!isValid}
+                disabled={!isValid || isLoading}
                 className="group mt-1 w-full shadow-sm transition-transform active:scale-[0.99] disabled:opacity-40"
               >
-                מתחילים
-                <ArrowStartIcon className="size-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                {isLoading ? (
+                  "רגע..."
+                ) : (
+                  <>
+                    מתחילים
+                    <ArrowStartIcon className="size-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                  </>
+                )}
               </Button>
             </form>
 
