@@ -1,3 +1,6 @@
+using Api.Features.Onboarding;
+using MongoDB.Driver;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +18,17 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
+
+var mongoConnectionString = builder.Configuration["MongoDB:ConnectionString"]!;
+var mongoDatabaseName = builder.Configuration["MongoDB:DatabaseName"]!;
+
+builder.Services.AddSingleton<IMongoDatabase>(_ =>
+{
+    var client = new MongoClient(mongoConnectionString);
+    return client.GetDatabase(mongoDatabaseName);
+});
+
+builder.Services.AddScoped<OnboardingService>();
 
 var app = builder.Build();
 
