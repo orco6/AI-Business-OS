@@ -24,7 +24,11 @@ function ArrowStartIcon({ className }: { className?: string }) {
   );
 }
 
-export function OnboardingScreen() {
+type OnboardingScreenProps = {
+  onNext?: (businessName: string) => void;
+};
+
+export function OnboardingScreen({ onNext }: OnboardingScreenProps = {}) {
   const [businessName, setBusinessName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,6 +51,7 @@ export function OnboardingScreen() {
 
       if (response.status === 200) {
         console.log("success");
+        onNext?.(businessName.trim());
       } else {
         console.log("error");
       }
