@@ -2,6 +2,15 @@ using System.Text.Json;
 
 namespace Api.Features.AI;
 
+public class BusinessInsights
+{
+    public string TargetAudience { get; set; } = string.Empty;
+    public string MainValue { get; set; } = string.Empty;
+    public string RecommendedTone { get; set; } = string.Empty;
+    public List<string> SuggestedColors { get; set; } = new();
+    public List<string> KeyFeatures { get; set; } = new();
+}
+
 public class OnboardingPlan
 {
     public bool NeedsCategories { get; set; }
@@ -12,6 +21,7 @@ public class OnboardingPlan
     public bool NeedsServiceArea { get; set; }
     public string? NextQuestion { get; set; }
     public List<string> WebsiteSections { get; set; } = new();
+    public BusinessInsights? BusinessInsights { get; set; }
 }
 
 public class OnboardingPlannerService
@@ -45,19 +55,40 @@ public class OnboardingPlannerService
             Business Type: {businessType}
             Business Description: {businessAnswer}
 
-            Analyze this business and return a JSON object with the following structure:
+            You are an expert Israeli business consultant. Analyze this specific business and return a personalized onboarding plan.
+
+            Rules:
+            - For restaurants: don't suggest "categories" - suggest menu, delivery, seating, hours
+            - For retail stores: suggest product categories relevant to what they sell
+            - For service businesses: suggest specializations, service area, pricing model
+            - For beauty/wellness: suggest treatment types, booking, pricing
+            - Be SPECIFIC to this exact business, not generic
+
+            Return ONLY this JSON structure:
             """ +
             """
             {
-              "needsCategories": true/false,
-              "categoriesLabel": "קטגוריות המוצרים" / "תחומי התמחות" / "סוגי טיפולים" etc,
-              "suggestedCategories": ["category1", "category2", ...],
-              "needsMenu": true/false,
-              "needsPricing": true/false,
-              "needsServiceArea": true/false,
-              "nextQuestion": "the next most important question to ask in Hebrew, or null if no more questions needed",
-              "websiteSections": ["hero", "about", "services", "gallery", "contact", "menu", "pricing", "area"]
+              "needsCategories": false,
+              "categoriesLabel": "",
+              "suggestedCategories": [],
+              "needsMenu": false,
+              "needsPricing": false,
+              "needsServiceArea": false,
+              "nextQuestion": "ONE most important follow-up question in Hebrew specific to THIS business, or null",
+              "websiteSections": ["hero", "about", "contact"],
+              "businessInsights": {
+                "targetAudience": "who are the customers in Hebrew",
+                "mainValue": "what makes this business special in Hebrew",
+                "recommendedTone": "professional/warm/youthful/luxury",
+                "suggestedColors": ["#color1", "#color2"],
+                "keyFeatures": ["feature1 in Hebrew", "feature2 in Hebrew", "feature3 in Hebrew"]
+              }
             }
+
+            For restaurants: needsMenu=true, websiteSections include "menu", "hours", "delivery" if relevant
+            For retail: needsCategories=true with SPECIFIC categories for THIS product type
+            For services: needsServiceArea=true, websiteSections include "services", "area", "process"
+            For beauty: needsCategories=true (treatment types), needsPricing=true
 
             Return ONLY valid JSON. No text before or after.
             """;
