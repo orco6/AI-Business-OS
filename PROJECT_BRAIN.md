@@ -203,21 +203,20 @@ Business Profile מלא
 
 ---
 
-## Sprint נוכחי - Sprint 4
+## Sprint נוכחי - Sprint 5
 
-**מה הושלם ב-Sprint 3:**
-- ✅ Claude API מחובר
-- ✅ AnthropicService + OrchestratorService
-- ✅ Welcome screen עם הודעה מ-Claude
+**מה הושלם ב-Sprint 4:**
+- ✅ NextAuth.js עם Google OAuth
+- ✅ דף Login מקצועי
+- ✅ Dashboard בסיסי עם שם המשתמש
+- ✅ Flow מלא: Login → Onboarding → Dashboard
+- ✅ SessionProvider מוגדר
 
-**Sprint 4 - המטרה:**
-- Auth - התחברות והרשמה
-- שמירת profileId
-- ניווט מ-"בואו נתחיל" לדשבורד
-- Dashboard ראשון בסיסי
-
-**הצעד הבא הראשון ב-Sprint 4:**
-לבנות Auth בסיסי - התחברות עם Google או Email.
+**Sprint 5 - המטרה הבאה:**
+- חיבור Business Profile למשתמש המחובר (userId)
+- שמירת profileId ב-session
+- Dashboard מציג את נתוני העסק האמיתיים
+- עיצוב Dashboard ברמה גבוהה
 
 ---
 
