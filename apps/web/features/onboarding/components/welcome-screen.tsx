@@ -17,11 +17,13 @@ function cleanMarkdown(text: string): string {
 type WelcomeScreenProps = {
   welcomeMessage: string;
   businessName: string;
+  onNext?: () => void;
 };
 
 export function WelcomeScreen({
   welcomeMessage,
   businessName,
+  onNext,
 }: WelcomeScreenProps) {
   const cleanMessage = cleanMarkdown(welcomeMessage);
 
@@ -72,7 +74,7 @@ export function WelcomeScreen({
               type="button"
               size="lg"
               className="mt-2 w-full shadow-sm transition-transform active:scale-[0.99]"
-              onClick={() => console.log("next")}
+              onClick={onNext}
             >
               בואו נתחיל
             </Button>

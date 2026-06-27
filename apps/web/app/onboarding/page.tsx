@@ -1,11 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { OnboardingScreen } from "@/features/onboarding";
 import { BusinessTypeScreen } from "@/features/onboarding/components/business-type-screen";
 import { WelcomeScreen } from "@/features/onboarding/components/welcome-screen";
 
 export default function OnboardingPage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [businessName, setBusinessName] = useState("");
   const [welcomeMessage, setWelcomeMessage] = useState("");
@@ -49,6 +51,7 @@ export default function OnboardingPage() {
       <WelcomeScreen
         welcomeMessage={welcomeMessage}
         businessName={businessName}
+        onNext={() => router.push("/dashboard")}
       />
     );
   }
