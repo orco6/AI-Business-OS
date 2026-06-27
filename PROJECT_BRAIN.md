@@ -203,20 +203,18 @@ Business Profile מלא
 
 ---
 
-## Sprint נוכחי - Sprint 5
+## Sprint נוכחי - Sprint 6
 
-**מה הושלם ב-Sprint 4:**
-- ✅ NextAuth.js עם Google OAuth
-- ✅ דף Login מקצועי
-- ✅ Dashboard בסיסי עם שם המשתמש
-- ✅ Flow מלא: Login → Onboarding → Dashboard
-- ✅ SessionProvider מוגדר
+**מה הושלם ב-Sprint 5:**
+- ✅ UserId מחובר ל-Business Profile
+- ✅ GET /api/business-profile endpoint
+- ✅ Dashboard מציג שם עסק + סוג עסק אמיתיים
 
-**Sprint 5 - המטרה הבאה:**
-- חיבור Business Profile למשתמש המחובר (userId)
-- שמירת profileId ב-session
-- Dashboard מציג את נתוני העסק האמיתיים
-- עיצוב Dashboard ברמה גבוהה
+**Sprint 6 - Website Agent:**
+- Content Agent - כותב תוכן לאתר לפי סוג עסק
+- Website Agent - מייצר קוד HTML/CSS מלא
+- Preview - מציג את האתר למשתמש
+- Deploy - שולח ל-Vercel
 
 ---
 
