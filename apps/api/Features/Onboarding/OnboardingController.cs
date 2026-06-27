@@ -1,3 +1,4 @@
+using Api.Features.AI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Features.Onboarding;
@@ -7,10 +8,14 @@ namespace Api.Features.Onboarding;
 public class OnboardingController : ControllerBase
 {
     private readonly OnboardingService _onboardingService;
+    private readonly OrchestratorService _orchestratorService;
 
-    public OnboardingController(OnboardingService onboardingService)
+    public OnboardingController(
+        OnboardingService onboardingService,
+        OrchestratorService orchestratorService)
     {
         _onboardingService = onboardingService;
+        _orchestratorService = orchestratorService;
     }
 
     [HttpPost("start")]
@@ -21,11 +26,17 @@ public class OnboardingController : ControllerBase
             return BadRequest();
         }
 
+        var businessType = request.BusinessType ?? "unknown";
+
         var profile = await _onboardingService.CreateBusinessProfileAsync(
             request.BusinessName,
-            request.BusinessType ?? "unknown");
+            businessType);
 
-        return Ok(new { status = "ok", profileId = profile.Id });
+        var welcomeMessage = await _orchestratorService.ProcessOnboardingAsync(
+            request.BusinessName,
+            businessType);
+
+        return Ok(new { status = "ok", profileId = profile.Id, welcomeMessage });
     }
 }
 

@@ -31,6 +31,7 @@ builder.Services.AddSingleton<IMongoDatabase>(_ =>
 
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<AnthropicService>();
+builder.Services.AddScoped<OrchestratorService>();
 builder.Services.AddScoped<OnboardingService>();
 
 var app = builder.Build();
