@@ -23,4 +23,12 @@ public class OnboardingService
         await _collection.InsertOneAsync(profile);
         return profile;
     }
+
+    public async Task<BusinessProfile?> GetByUserIdAsync(string userId)
+    {
+        return await _collection
+            .Find(p => p.UserId == userId)
+            .SortByDescending(p => p.CreatedAt)
+            .FirstOrDefaultAsync();
+    }
 }

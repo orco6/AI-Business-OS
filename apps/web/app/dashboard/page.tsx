@@ -2,18 +2,40 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [businessProfile, setBusinessProfile] = useState<{
+    businessName: string;
+    businessType: string;
+  } | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
     }
   }, [status, router]);
+
+  useEffect(() => {
+    if (!session?.user?.email) return;
+
+    fetch(
+      `http://localhost:5063/api/business-profile?userId=${session.user.email}`,
+    )
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setBusinessProfile({
+            businessName: data.businessName,
+            businessType: data.businessType,
+          });
+        }
+      })
+      .catch(() => {});
+  }, [session?.user?.email]);
 
   if (status === "loading") {
     return (
@@ -46,9 +68,18 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6">
-          <p className="text-base text-muted-foreground">
-            הדשבורד שלך בבנייה. בקרוב תוכל לראות כאן את כל המידע על העסק שלך.
-          </p>
+          {businessProfile ? (
+            <div className="flex flex-col gap-1">
+              <p className="text-base">{businessProfile.businessName}</p>
+              <p className="text-sm text-muted-foreground">
+                {businessProfile.businessType}
+              </p>
+            </div>
+          ) : (
+            <p className="text-base text-muted-foreground">
+              הדשבורד שלך בבנייה. בקרוב תוכל לראות כאן את כל המידע על העסק שלך.
+            </p>
+          )}
         </div>
       </div>
     </main>
