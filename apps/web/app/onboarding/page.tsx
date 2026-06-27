@@ -5,8 +5,20 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { OnboardingScreen } from "@/features/onboarding";
 import { BusinessTypeScreen } from "@/features/onboarding/components/business-type-screen";
+import { CategoriesScreen } from "@/features/onboarding/components/categories-screen";
 import { DeepQuestionScreen } from "@/features/onboarding/components/deep-question-screen";
 import { WelcomeScreen } from "@/features/onboarding/components/welcome-screen";
+
+type OnboardingPlan = {
+  needsCategories: boolean;
+  categoriesLabel: string;
+  suggestedCategories: string[];
+  needsMenu: boolean;
+  needsPricing: boolean;
+  needsServiceArea: boolean;
+  nextQuestion: string | null;
+  websiteSections: string[];
+};
 
 export default function OnboardingPage() {
   const { data: session } = useSession();
@@ -16,6 +28,10 @@ export default function OnboardingPage() {
   const [businessType, setBusinessType] = useState("");
   const [deepQuestion, setDeepQuestion] = useState("");
   const [businessAnswer, setBusinessAnswer] = useState("");
+  const [onboardingPlan, setOnboardingPlan] = useState<OnboardingPlan | null>(
+    null,
+  );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [profileId, setProfileId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +39,7 @@ export default function OnboardingPage() {
   async function handleBusinessTypeNext(
     type: string,
     answer?: string,
+    categories?: string[],
   ) {
     setIsLoading(true);
     try {
@@ -35,6 +52,7 @@ export default function OnboardingPage() {
             businessName,
             businessType: type,
             businessAnswer: answer ?? businessAnswer,
+            selectedCategories: categories ?? selectedCategories,
             userId: session?.user?.email ?? "anonymous",
           }),
         },
@@ -48,7 +66,7 @@ export default function OnboardingPage() {
         if (data.profileId && data.welcomeMessage) {
           setProfileId(data.profileId);
           setWelcomeMessage(data.welcomeMessage);
-          setStep(3);
+          setStep(4);
         }
       } else {
         console.log("error");
@@ -89,7 +107,42 @@ export default function OnboardingPage() {
     }
   }
 
-  if (step === 3 && welcomeMessage && profileId) {
+  async function handleDeepQuestionNext(answer: string) {
+    setBusinessAnswer(answer);
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:5063/api/onboarding/plan",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessName,
+            businessType,
+            businessAnswer: answer,
+          }),
+        },
+      );
+
+      if (response.status === 200) {
+        const plan = (await response.json()) as OnboardingPlan;
+        setOnboardingPlan(plan);
+        if (plan.needsCategories) {
+          setStep(3);
+        } else {
+          await handleBusinessTypeNext(businessType, answer);
+        }
+      } else {
+        console.log("error");
+      }
+    } catch {
+      console.log("error");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  if (step === 4 && welcomeMessage && profileId) {
     return (
       <WelcomeScreen
         welcomeMessage={welcomeMessage}
@@ -99,15 +152,33 @@ export default function OnboardingPage() {
     );
   }
 
+  if (step === 3 && onboardingPlan?.needsCategories) {
+    return (
+      <div className="relative">
+        <CategoriesScreen
+          categoriesLabel={onboardingPlan.categoriesLabel}
+          suggestedCategories={onboardingPlan.suggestedCategories}
+          onNext={(categories) => {
+            setSelectedCategories(categories);
+            handleBusinessTypeNext(businessType, undefined, categories);
+          }}
+          onSkip={() => handleBusinessTypeNext(businessType)}
+        />
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+            <p className="text-base font-medium text-muted-foreground">רגע...</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (step === 2.5 && deepQuestion) {
     return (
       <div className="relative">
         <DeepQuestionScreen
           question={deepQuestion}
-          onNext={(answer) => {
-            setBusinessAnswer(answer);
-            handleBusinessTypeNext(businessType, answer);
-          }}
+          onNext={handleDeepQuestionNext}
           onSkip={() => handleBusinessTypeNext(businessType)}
         />
         {isLoading && (

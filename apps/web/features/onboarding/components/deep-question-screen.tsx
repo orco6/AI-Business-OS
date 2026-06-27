@@ -75,6 +75,12 @@ export function DeepQuestionScreen({
                 )}
               />
 
+              {answer.length > 0 && answer.length < 10 ? (
+                <p className="text-sm text-muted-foreground">
+                  עוד {10 - answer.length} תווים לפחות
+                </p>
+              ) : null}
+
               <Button
                 type="submit"
                 size="lg"

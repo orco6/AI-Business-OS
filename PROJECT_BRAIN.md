@@ -60,17 +60,21 @@
 ### Frontend - apps/web
 - Next.js 16, React 19, TypeScript, Tailwind v4
 - RTL עברית מלא
-- `/onboarding` - אונבורדינג מלא 3 שלבים:
-  - שלב 1: שם עסק → שולח ל-Backend → עובר לשלב 2
+- `/onboarding` - אונבורדינג מלא:
+  - שלב 1: שם עסק
   - שלב 2: סוג עסק (6 קטגוריות עם Lucide icons)
-  - שלב 3: Welcome screen עם הודעה אישית מ-Claude
+  - שלב 2.5: שאלה עמוקה (DeepQuestionScreen)
+  - שלב 3: קטגוריות (CategoriesScreen, רק אם `plan.needsCategories`)
+  - שלב 4: Welcome screen עם הודעה אישית מ-Claude
 - Build עובר, נבדק במובייל ודסקטופ
 
 **קבצים חשובים:**
 - `apps/web/app/onboarding/page.tsx` - לוגיקת האונבורדינג
 - `apps/web/features/onboarding/components/onboarding-screen.tsx` - שלב 1
 - `apps/web/features/onboarding/components/business-type-screen.tsx` - שלב 2
-- `apps/web/features/onboarding/components/welcome-screen.tsx` - שלב 3
+- `apps/web/features/onboarding/components/deep-question-screen.tsx` - שלב 2.5
+- `apps/web/features/onboarding/components/categories-screen.tsx` - שלב 3
+- `apps/web/features/onboarding/components/welcome-screen.tsx` - שלב 4
 - `apps/web/components/ui/button.tsx`
 - `apps/web/app/globals.css`
 
