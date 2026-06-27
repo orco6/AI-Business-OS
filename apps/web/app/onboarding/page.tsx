@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { OnboardingScreen } from "@/features/onboarding";
@@ -7,6 +8,7 @@ import { BusinessTypeScreen } from "@/features/onboarding/components/business-ty
 import { WelcomeScreen } from "@/features/onboarding/components/welcome-screen";
 
 export default function OnboardingPage() {
+  const { data: session } = useSession();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [businessName, setBusinessName] = useState("");
@@ -22,7 +24,11 @@ export default function OnboardingPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ businessName, businessType }),
+          body: JSON.stringify({
+            businessName,
+            businessType,
+            userId: session?.user?.email ?? "anonymous",
+          }),
         },
       );
 

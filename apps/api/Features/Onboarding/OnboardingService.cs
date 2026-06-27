@@ -11,10 +11,11 @@ public class OnboardingService
         _collection = database.GetCollection<BusinessProfile>("business_profiles");
     }
 
-    public async Task<BusinessProfile> CreateBusinessProfileAsync(string businessName, string businessType)
+    public async Task<BusinessProfile> CreateBusinessProfileAsync(string businessName, string businessType, string userId)
     {
         var profile = new BusinessProfile
         {
+            UserId = userId,
             BusinessName = businessName,
             BusinessType = businessType,
         };

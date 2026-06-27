@@ -9,6 +9,7 @@ public class BusinessProfile
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
+    public string UserId { get; set; } = string.Empty;
     public string BusinessName { get; set; } = string.Empty;
     public string BusinessType { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

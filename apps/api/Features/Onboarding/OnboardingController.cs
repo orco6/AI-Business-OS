@@ -30,7 +30,8 @@ public class OnboardingController : ControllerBase
 
         var profile = await _onboardingService.CreateBusinessProfileAsync(
             request.BusinessName,
-            businessType);
+            businessType,
+            request.UserId ?? "anonymous");
 
         var welcomeMessage = await _orchestratorService.ProcessOnboardingAsync(
             request.BusinessName,
@@ -42,6 +43,7 @@ public class OnboardingController : ControllerBase
 
 public sealed class StartOnboardingRequest
 {
+    public string? UserId { get; set; }
     public string? BusinessName { get; set; }
     public string? BusinessType { get; set; }
 }
