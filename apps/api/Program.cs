@@ -33,6 +33,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<AnthropicService>();
 builder.Services.AddScoped<OrchestratorService>();
 builder.Services.AddScoped<OnboardingOrchestratorService>();
+builder.Services.AddScoped<OnboardingPlannerService>();
 builder.Services.AddScoped<OnboardingService>();
 
 var app = builder.Build();
