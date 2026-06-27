@@ -1,3 +1,4 @@
+using Api.Features.AI;
 using Api.Features.Onboarding;
 using MongoDB.Driver;
 
@@ -28,6 +29,8 @@ builder.Services.AddSingleton<IMongoDatabase>(_ =>
     return client.GetDatabase(mongoDatabaseName);
 });
 
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<AnthropicService>();
 builder.Services.AddScoped<OnboardingService>();
 
 var app = builder.Build();
