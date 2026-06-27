@@ -226,12 +226,15 @@ Business Profile מלא
 - ✅ MongoDB מחובר
 - ✅ Onboarding שלבים 1+2 עובדים end-to-end
 - ✅ Business Profile נשמר ב-DB
+- ✅ Anthropic Claude API מחובר
+- ✅ AnthropicService - קריאות ל-Claude
+- ✅ OrchestratorService - Orchestrator ראשון
+- ✅ Welcome message בעברית מ-Claude
 
 הצעד הבא:
-- פתיחת Anthropic API key
-- חיבור Claude ל-Backend
-- בניית Orchestrator ראשון
-- Agent ראשון שעושה משהו אמיתי
+- חיבור welcomeMessage לפרונטאנד
+- מסך "הכל מוכן" אחרי אונבורדינג
+- הצגת הודעת הברוכים הבאים למשתמש
 
 ---
 
