@@ -14,6 +14,7 @@ public class OrchestratorService
         const string systemPrompt = """
             You are an AI business assistant helping Israeli small business owners.
             You speak Hebrew. Be warm, professional, and concise.
+            Never use markdown formatting. No asterisks, no hashtags, no bold, no bullet points. Plain text only.
             """;
 
         var userMessage = $"""

@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { OnboardingScreen } from "@/features/onboarding";
 import { BusinessTypeScreen } from "@/features/onboarding/components/business-type-screen";
+import { WelcomeScreen } from "@/features/onboarding/components/welcome-screen";
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [businessName, setBusinessName] = useState("");
+  const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [profileId, setProfileId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleBusinessTypeNext(businessType: string) {
@@ -22,8 +25,15 @@ export default function OnboardingPage() {
       );
 
       if (response.status === 200) {
-        const data = (await response.json()) as { profileId?: string };
-        console.log({ profileId: data.profileId });
+        const data = (await response.json()) as {
+          profileId?: string;
+          welcomeMessage?: string;
+        };
+        if (data.profileId && data.welcomeMessage) {
+          setProfileId(data.profileId);
+          setWelcomeMessage(data.welcomeMessage);
+          setStep(3);
+        }
       } else {
         console.log("error");
       }
@@ -32,6 +42,15 @@ export default function OnboardingPage() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  if (step === 3 && welcomeMessage && profileId) {
+    return (
+      <WelcomeScreen
+        welcomeMessage={welcomeMessage}
+        businessName={businessName}
+      />
+    );
   }
 
   if (step === 2) {
