@@ -25,10 +25,16 @@ public class BusinessProfile
     public string MainValue { get; set; } = string.Empty;
     public List<string> KeyFeatures { get; set; } = new();
 
-    // Contact info (to be filled later)
+    // Contact info
     public string Phone { get; set; } = string.Empty;
     public string WhatsApp { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string Hours { get; set; } = string.Empty;
+    public string DeliveryInfo { get; set; } = string.Empty;
+    public string EmergencyService { get; set; } = string.Empty;
+    public string BookingMethod { get; set; } = string.Empty;
     public string ServiceArea { get; set; } = string.Empty;
     public Dictionary<string, List<string>> PhotosByCategory { get; set; } = new();
 }

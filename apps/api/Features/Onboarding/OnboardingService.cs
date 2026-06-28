@@ -22,7 +22,16 @@ public class OnboardingService
         List<string>? suggestedColors = null,
         string targetAudience = "",
         string mainValue = "",
-        List<string>? keyFeatures = null)
+        List<string>? keyFeatures = null,
+        string phone = "",
+        string whatsApp = "",
+        string address = "",
+        string ownerName = "",
+        string city = "",
+        string hours = "",
+        string deliveryInfo = "",
+        string emergencyService = "",
+        string bookingMethod = "")
     {
         var profile = new BusinessProfile
         {
@@ -37,6 +46,15 @@ public class OnboardingService
             TargetAudience = targetAudience,
             MainValue = mainValue,
             KeyFeatures = keyFeatures ?? new(),
+            Phone = phone,
+            WhatsApp = whatsApp,
+            Address = address,
+            OwnerName = ownerName,
+            City = city,
+            Hours = hours,
+            DeliveryInfo = deliveryInfo,
+            EmergencyService = emergencyService,
+            BookingMethod = bookingMethod,
         };
 
         await _collection.InsertOneAsync(profile);

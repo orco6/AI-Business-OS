@@ -65,6 +65,8 @@
   - שלב 2: סוג עסק (6 קטגוריות עם Lucide icons)
   - שלב 2.5: שאלה עמוקה (DeepQuestionScreen)
   - שלב 3: קטגוריות (CategoriesScreen, רק אם `plan.needsCategories`)
+  - שלב 3.25: פרטי קשר (ContactDetailsScreen) — טלפון, WhatsApp, כתובת, שעות, שדות לפי סוג עסק
+  - שלב 3.5: העלאת תמונות (PhotosUploadScreen, אחרי קטגוריות)
   - שלב 4: Welcome screen עם הודעה אישית מ-Claude
 - Build עובר, נבדק במובייל ודסקטופ
 
@@ -74,6 +76,7 @@
 - `apps/web/features/onboarding/components/business-type-screen.tsx` - שלב 2
 - `apps/web/features/onboarding/components/deep-question-screen.tsx` - שאלת העמקה
 - `apps/web/features/onboarding/components/categories-screen.tsx` - קטגוריות
+- `apps/web/features/onboarding/components/contact-details-screen.tsx` - פרטי קשר
 - `apps/web/features/onboarding/components/photos-upload-screen.tsx` - העלאת תמונות
 - `apps/web/features/onboarding/components/welcome-screen.tsx` - שלב 4
 - `apps/web/components/ui/button.tsx`
@@ -82,7 +85,7 @@
 ### Backend - apps/api
 - ASP.NET Core 8, Controllers style, .NET 10
 - `GET /health` → `{ status: "ok", service: "api" }`
-- `POST /api/onboarding/start` → מקבל businessName + businessType, שומר ב-MongoDB, קורא ל-Claude, מחזיר profileId + welcomeMessage
+- `POST /api/onboarding/start` → מקבל businessName + businessType + פרטי קשר, שומר ב-MongoDB, קורא ל-Claude, מחזיר profileId + welcomeMessage
 - `POST /api/ai/test` → endpoint לבדיקת Claude (development only)
 - CORS מוגדר ל-localhost:3000
 - MongoDB Driver 3.9.0 מותקן

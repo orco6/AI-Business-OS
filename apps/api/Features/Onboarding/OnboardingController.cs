@@ -38,7 +38,16 @@ public class OnboardingController : ControllerBase
             suggestedColors: request.SuggestedColors,
             targetAudience: request.TargetAudience ?? "",
             mainValue: request.MainValue ?? "",
-            keyFeatures: request.KeyFeatures);
+            keyFeatures: request.KeyFeatures,
+            phone: request.Phone ?? "",
+            whatsApp: request.WhatsApp ?? "",
+            address: request.Address ?? "",
+            ownerName: request.OwnerName ?? "",
+            city: request.City ?? "",
+            hours: request.Hours ?? "",
+            deliveryInfo: request.DeliveryInfo ?? "",
+            emergencyService: request.EmergencyService ?? "",
+            bookingMethod: request.BookingMethod ?? "");
 
         var welcomeMessage = await _orchestratorService.ProcessOnboardingAsync(
             request.BusinessName,
@@ -60,4 +69,13 @@ public sealed class StartOnboardingRequest
     public string? TargetAudience { get; set; }
     public string? MainValue { get; set; }
     public List<string>? KeyFeatures { get; set; }
+    public string? Phone { get; set; }
+    public string? WhatsApp { get; set; }
+    public string? Address { get; set; }
+    public string? OwnerName { get; set; }
+    public string? City { get; set; }
+    public string? Hours { get; set; }
+    public string? DeliveryInfo { get; set; }
+    public string? EmergencyService { get; set; }
+    public string? BookingMethod { get; set; }
 }

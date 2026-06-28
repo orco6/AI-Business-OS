@@ -6,6 +6,10 @@ import { useState } from "react";
 import { OnboardingScreen } from "@/features/onboarding";
 import { BusinessTypeScreen } from "@/features/onboarding/components/business-type-screen";
 import { CategoriesScreen } from "@/features/onboarding/components/categories-screen";
+import {
+  ContactDetailsScreen,
+  type ContactDetails,
+} from "@/features/onboarding/components/contact-details-screen";
 import { DeepQuestionScreen } from "@/features/onboarding/components/deep-question-screen";
 import { PhotosUploadScreen } from "@/features/onboarding/components/photos-upload-screen";
 import { WelcomeScreen } from "@/features/onboarding/components/welcome-screen";
@@ -44,6 +48,9 @@ export default function OnboardingPage() {
   const [uploadedPhotos, setUploadedPhotos] = useState<Record<string, string[]>>(
     {},
   );
+  const [contactDetails, setContactDetails] = useState<ContactDetails | null>(
+    null,
+  );
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [profileId, setProfileId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -52,9 +59,11 @@ export default function OnboardingPage() {
     type: string,
     answer?: string,
     categories?: string[],
-    goToPhotos?: boolean,
+    details?: ContactDetails,
+    uploadedPhotosParam?: Record<string, string[]>,
   ) {
     setIsLoading(true);
+    const contact = details ?? contactDetails;
     try {
       const response = await fetch(
         "http://localhost:5063/api/onboarding/start",
@@ -73,6 +82,12 @@ export default function OnboardingPage() {
             targetAudience: onboardingPlan?.businessInsights?.targetAudience ?? "",
             mainValue: onboardingPlan?.businessInsights?.mainValue ?? "",
             keyFeatures: onboardingPlan?.businessInsights?.keyFeatures ?? [],
+            phone: contact?.phone ?? "",
+            whatsapp: contact?.whatsapp ?? "",
+            address: contact?.address ?? "",
+            city: contact?.city ?? "",
+            hours: contact?.hours ?? "",
+            ownerName: contact?.ownerName ?? "",
           }),
         },
       );
@@ -85,7 +100,36 @@ export default function OnboardingPage() {
         if (data.profileId && data.welcomeMessage) {
           setProfileId(data.profileId);
           setWelcomeMessage(data.welcomeMessage);
-          setStep(goToPhotos ? 3.5 : 4);
+
+          const photosToUpload = uploadedPhotosParam ?? uploadedPhotos;
+          if (data.profileId && Object.keys(photosToUpload).length > 0) {
+            const uploadEntries = await Promise.all(
+              Object.entries(photosToUpload).map(async ([category, base64Photos]) => {
+                const response = await fetch("/api/upload", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    images: base64Photos,
+                    category,
+                    profileId: data.profileId,
+                  }),
+                });
+                const result = (await response.json()) as { urls: string[] };
+                return [category, result.urls] as const;
+              }),
+            );
+            const urlsByCategory = Object.fromEntries(uploadEntries);
+            await fetch("http://localhost:5063/api/photos", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                profileId: data.profileId,
+                photosByCategory: urlsByCategory,
+              }),
+            });
+          }
+
+          setStep(4);
         }
       } else {
         console.log("error");
@@ -149,7 +193,7 @@ export default function OnboardingPage() {
         if (plan.needsCategories) {
           setStep(3);
         } else {
-          await handleBusinessTypeNext(businessType, answer);
+          setStep(3.5);
         }
       } else {
         console.log("error");
@@ -171,11 +215,47 @@ export default function OnboardingPage() {
     );
   }
 
+  if (step === 3.7) {
+    return (
+      <div className="relative">
+        <ContactDetailsScreen
+          businessType={businessType}
+          onNext={(details) => {
+            setContactDetails(details);
+            handleBusinessTypeNext(
+              businessType,
+              undefined,
+              selectedCategories,
+              details,
+              uploadedPhotos,
+            );
+          }}
+          onSkip={() => setStep(4)}
+        />
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+            <p className="text-base font-medium text-muted-foreground">רגע...</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (step === 3.5) {
+    const defaultCategoriesByType: Record<string, string[]> = {
+      restaurant: ["מנות מהתפריט", "אווירת המסעדה", "הצוות שלנו"],
+      beauty: ["עבודות לפני ואחרי", "הסלון שלנו"],
+      services: ["עבודות שביצענו", "הצוות שלנו"],
+      fitness: ["המתקנים שלנו", "אימונים"],
+      other: ["תמונות מהעסק"],
+    };
+
     const photoCategories =
       selectedCategories.length > 0
         ? selectedCategories
-        : (onboardingPlan?.suggestedCategories ?? []);
+        : (onboardingPlan?.suggestedCategories?.length ?? 0) > 0
+          ? onboardingPlan!.suggestedCategories
+          : (defaultCategoriesByType[businessType] ?? ["תמונות מהעסק"]);
 
     return (
       <div className="relative">
@@ -183,22 +263,11 @@ export default function OnboardingPage() {
           categories={photoCategories}
           businessName={businessName}
           profileId={profileId}
-          onNext={async (photos) => {
+          onNext={(photos) => {
             setUploadedPhotos(photos);
-            // Save photo URLs to backend
-            if (profileId && Object.keys(photos).length > 0) {
-              await fetch("http://localhost:5063/api/photos", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  profileId,
-                  photosByCategory: photos,
-                }),
-              });
-            }
-            setStep(4);
+            setStep(3.7);
           }}
-          onSkip={() => setStep(4)}
+          onSkip={() => setStep(3.7)}
         />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80">
@@ -218,7 +287,7 @@ export default function OnboardingPage() {
           onNext={(categories) => {
             setSelectedCategories(categories);
             setPendingCategories(categories);
-            handleBusinessTypeNext(businessType, undefined, categories, true);
+            setStep(3.5);
           }}
           onSkip={() => handleBusinessTypeNext(businessType)}
         />
