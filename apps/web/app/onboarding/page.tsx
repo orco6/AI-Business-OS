@@ -40,6 +40,7 @@ export default function OnboardingPage() {
     null,
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [pendingCategories, setPendingCategories] = useState<string[]>([]);
   const [uploadedPhotos, setUploadedPhotos] = useState<Record<string, string[]>>(
     {},
   );
@@ -51,6 +52,7 @@ export default function OnboardingPage() {
     type: string,
     answer?: string,
     categories?: string[],
+    goToPhotos?: boolean,
   ) {
     setIsLoading(true);
     try {
@@ -83,7 +85,7 @@ export default function OnboardingPage() {
         if (data.profileId && data.welcomeMessage) {
           setProfileId(data.profileId);
           setWelcomeMessage(data.welcomeMessage);
-          setStep(4);
+          setStep(goToPhotos ? 3.5 : 4);
         }
       } else {
         console.log("error");
@@ -181,13 +183,22 @@ export default function OnboardingPage() {
           categories={photoCategories}
           businessName={businessName}
           profileId={profileId}
-          onNext={(photos) => {
+          onNext={async (photos) => {
             setUploadedPhotos(photos);
-            handleBusinessTypeNext(businessType, undefined, selectedCategories);
+            // Save photo URLs to backend
+            if (profileId && Object.keys(photos).length > 0) {
+              await fetch("http://localhost:5063/api/photos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  profileId,
+                  photosByCategory: photos,
+                }),
+              });
+            }
+            setStep(4);
           }}
-          onSkip={() =>
-            handleBusinessTypeNext(businessType, undefined, selectedCategories)
-          }
+          onSkip={() => setStep(4)}
         />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80">
@@ -206,11 +217,8 @@ export default function OnboardingPage() {
           suggestedCategories={onboardingPlan.suggestedCategories}
           onNext={(categories) => {
             setSelectedCategories(categories);
-            if (categories.length === 0 && !onboardingPlan.needsCategories) {
-              handleBusinessTypeNext(businessType, undefined, categories);
-            } else {
-              setStep(3.5);
-            }
+            setPendingCategories(categories);
+            handleBusinessTypeNext(businessType, undefined, categories, true);
           }}
           onSkip={() => handleBusinessTypeNext(businessType)}
         />

@@ -50,4 +50,11 @@ public class OnboardingService
             .SortByDescending(p => p.CreatedAt)
             .FirstOrDefaultAsync();
     }
+
+    public async Task UpdatePhotosAsync(string profileId, Dictionary<string, List<string>> photosByCategory)
+    {
+        var filter = Builders<BusinessProfile>.Filter.Eq(p => p.Id, profileId);
+        var update = Builders<BusinessProfile>.Update.Set(p => p.PhotosByCategory, photosByCategory);
+        await _collection.UpdateOneAsync(filter, update);
+    }
 }

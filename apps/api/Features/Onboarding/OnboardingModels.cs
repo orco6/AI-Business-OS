@@ -30,4 +30,5 @@ public class BusinessProfile
     public string WhatsApp { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public string ServiceArea { get; set; } = string.Empty;
+    public Dictionary<string, List<string>> PhotosByCategory { get; set; } = new();
 }
