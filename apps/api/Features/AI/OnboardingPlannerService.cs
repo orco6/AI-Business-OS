@@ -49,13 +49,16 @@ public class OnboardingPlannerService
             You respond in JSON only. No markdown, no explanation.
             """;
 
+        var knowledgeBase = BusinessKnowledgeBase.GetKnowledgeForBusiness(businessType, businessAnswer);
+
         var userMessage =
             $"""
+            {knowledgeBase}
+
+            Now analyze this specific business and create a precise onboarding plan:
             Business Name: {businessName}
             Business Type: {businessType}
             Business Description: {businessAnswer}
-
-            You are an expert Israeli business consultant. Analyze this specific business and return a personalized onboarding plan.
 
             Rules:
             - For restaurants: don't suggest "categories" - suggest menu, delivery, seating, hours
