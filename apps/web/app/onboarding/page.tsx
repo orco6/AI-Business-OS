@@ -180,6 +180,7 @@ export default function OnboardingPage() {
         <PhotosUploadScreen
           categories={photoCategories}
           businessName={businessName}
+          profileId={profileId}
           onNext={(photos) => {
             setUploadedPhotos(photos);
             handleBusinessTypeNext(businessType, undefined, selectedCategories);

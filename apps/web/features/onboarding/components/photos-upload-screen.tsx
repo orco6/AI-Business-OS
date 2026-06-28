@@ -15,6 +15,7 @@ const MAX_PHOTOS_PER_CATEGORY = 10;
 type PhotosUploadScreenProps = {
   categories: string[];
   businessName: string;
+  profileId: string;
   onNext: (uploadedPhotos: Record<string, string[]>) => void;
   onSkip: () => void;
 };
@@ -31,12 +32,14 @@ function readFileAsDataUrl(file: File): Promise<string> {
 export function PhotosUploadScreen({
   categories,
   businessName: _businessName,
+  profileId,
   onNext,
   onSkip,
 }: PhotosUploadScreenProps) {
   const [photosByCategory, setPhotosByCategory] = useState<
     Record<string, string[]>
   >(() => Object.fromEntries(categories.map((category) => [category, []])));
+  const [isUploading, setIsUploading] = useState(false);
   const [dragOverCategory, setDragOverCategory] = useState<string | null>(
     null,
   );
@@ -89,9 +92,36 @@ export function PhotosUploadScreen({
     void addPhotos(category, event.dataTransfer.files);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onNext(photosByCategory);
+    setIsUploading(true);
+
+    try {
+      const uploadEntries = await Promise.all(
+        categories
+          .filter((category) => (photosByCategory[category] ?? []).length > 0)
+          .map(async (category) => {
+            const photos = photosByCategory[category] ?? [];
+            const response = await fetch("/api/upload", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ images: photos, category, profileId }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Upload failed");
+            }
+
+            const data = (await response.json()) as { urls: string[] };
+            return [category, data.urls] as const;
+          }),
+      );
+
+      const urlsByCategory = Object.fromEntries(uploadEntries);
+      onNext(urlsByCategory);
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   return (
@@ -209,9 +239,10 @@ export function PhotosUploadScreen({
             <Button
               type="submit"
               size="lg"
+              disabled={isUploading}
               className="w-full shadow-sm transition-transform active:scale-[0.99]"
             >
-              המשך
+              {isUploading ? "מעלה תמונות..." : "המשך"}
             </Button>
 
             <button
