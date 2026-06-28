@@ -11,13 +11,32 @@ public class OnboardingService
         _collection = database.GetCollection<BusinessProfile>("business_profiles");
     }
 
-    public async Task<BusinessProfile> CreateBusinessProfileAsync(string businessName, string businessType, string userId)
+    public async Task<BusinessProfile> CreateBusinessProfileAsync(
+        string businessName,
+        string businessType,
+        string userId,
+        string businessAnswer = "",
+        List<string>? selectedCategories = null,
+        List<string>? websiteSections = null,
+        string recommendedTone = "",
+        List<string>? suggestedColors = null,
+        string targetAudience = "",
+        string mainValue = "",
+        List<string>? keyFeatures = null)
     {
         var profile = new BusinessProfile
         {
             UserId = userId,
             BusinessName = businessName,
             BusinessType = businessType,
+            BusinessAnswer = businessAnswer,
+            SelectedCategories = selectedCategories ?? new(),
+            WebsiteSections = websiteSections ?? new(),
+            RecommendedTone = recommendedTone,
+            SuggestedColors = suggestedColors ?? new(),
+            TargetAudience = targetAudience,
+            MainValue = mainValue,
+            KeyFeatures = keyFeatures ?? new(),
         };
 
         await _collection.InsertOneAsync(profile);

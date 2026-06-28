@@ -31,7 +31,14 @@ public class OnboardingController : ControllerBase
         var profile = await _onboardingService.CreateBusinessProfileAsync(
             request.BusinessName,
             businessType,
-            request.UserId ?? "anonymous");
+            request.UserId ?? "anonymous",
+            selectedCategories: request.SelectedCategories,
+            websiteSections: request.WebsiteSections,
+            recommendedTone: request.RecommendedTone ?? "",
+            suggestedColors: request.SuggestedColors,
+            targetAudience: request.TargetAudience ?? "",
+            mainValue: request.MainValue ?? "",
+            keyFeatures: request.KeyFeatures);
 
         var welcomeMessage = await _orchestratorService.ProcessOnboardingAsync(
             request.BusinessName,
@@ -46,4 +53,11 @@ public sealed class StartOnboardingRequest
     public string? UserId { get; set; }
     public string? BusinessName { get; set; }
     public string? BusinessType { get; set; }
+    public List<string>? SelectedCategories { get; set; }
+    public List<string>? WebsiteSections { get; set; }
+    public string? RecommendedTone { get; set; }
+    public List<string>? SuggestedColors { get; set; }
+    public string? TargetAudience { get; set; }
+    public string? MainValue { get; set; }
+    public List<string>? KeyFeatures { get; set; }
 }

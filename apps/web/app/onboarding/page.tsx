@@ -18,6 +18,13 @@ type OnboardingPlan = {
   needsServiceArea: boolean;
   nextQuestion: string | null;
   websiteSections: string[];
+  businessInsights?: {
+    targetAudience: string;
+    mainValue: string;
+    recommendedTone: string;
+    suggestedColors: string[];
+    keyFeatures: string[];
+  };
 };
 
 export default function OnboardingPage() {
@@ -54,6 +61,12 @@ export default function OnboardingPage() {
             businessAnswer: answer ?? businessAnswer,
             selectedCategories: categories ?? selectedCategories,
             userId: session?.user?.email ?? "anonymous",
+            websiteSections: onboardingPlan?.websiteSections ?? [],
+            recommendedTone: onboardingPlan?.businessInsights?.recommendedTone ?? "",
+            suggestedColors: onboardingPlan?.businessInsights?.suggestedColors ?? [],
+            targetAudience: onboardingPlan?.businessInsights?.targetAudience ?? "",
+            mainValue: onboardingPlan?.businessInsights?.mainValue ?? "",
+            keyFeatures: onboardingPlan?.businessInsights?.keyFeatures ?? [],
           }),
         },
       );

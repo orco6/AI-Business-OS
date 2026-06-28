@@ -12,6 +12,22 @@ public class BusinessProfile
     public string UserId { get; set; } = string.Empty;
     public string BusinessName { get; set; } = string.Empty;
     public string BusinessType { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string BusinessAnswer { get; set; } = string.Empty;
+    public List<string> SelectedCategories { get; set; } = new();
     public string Status { get; set; } = "onboarding";
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // From OnboardingPlan
+    public List<string> WebsiteSections { get; set; } = new();
+    public string RecommendedTone { get; set; } = string.Empty;
+    public List<string> SuggestedColors { get; set; } = new();
+    public string TargetAudience { get; set; } = string.Empty;
+    public string MainValue { get; set; } = string.Empty;
+    public List<string> KeyFeatures { get; set; } = new();
+
+    // Contact info (to be filled later)
+    public string Phone { get; set; } = string.Empty;
+    public string WhatsApp { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string ServiceArea { get; set; } = string.Empty;
 }
