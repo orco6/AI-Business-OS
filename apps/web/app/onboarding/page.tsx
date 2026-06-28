@@ -7,6 +7,7 @@ import { OnboardingScreen } from "@/features/onboarding";
 import { BusinessTypeScreen } from "@/features/onboarding/components/business-type-screen";
 import { CategoriesScreen } from "@/features/onboarding/components/categories-screen";
 import { DeepQuestionScreen } from "@/features/onboarding/components/deep-question-screen";
+import { PhotosUploadScreen } from "@/features/onboarding/components/photos-upload-screen";
 import { WelcomeScreen } from "@/features/onboarding/components/welcome-screen";
 
 type OnboardingPlan = {
@@ -39,6 +40,9 @@ export default function OnboardingPage() {
     null,
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [uploadedPhotos, setUploadedPhotos] = useState<Record<string, string[]>>(
+    {},
+  );
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [profileId, setProfileId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -165,6 +169,34 @@ export default function OnboardingPage() {
     );
   }
 
+  if (step === 3.5) {
+    const photoCategories =
+      selectedCategories.length > 0
+        ? selectedCategories
+        : (onboardingPlan?.suggestedCategories ?? []);
+
+    return (
+      <div className="relative">
+        <PhotosUploadScreen
+          categories={photoCategories}
+          businessName={businessName}
+          onNext={(photos) => {
+            setUploadedPhotos(photos);
+            handleBusinessTypeNext(businessType, undefined, selectedCategories);
+          }}
+          onSkip={() =>
+            handleBusinessTypeNext(businessType, undefined, selectedCategories)
+          }
+        />
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+            <p className="text-base font-medium text-muted-foreground">רגע...</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (step === 3 && onboardingPlan?.needsCategories) {
     return (
       <div className="relative">
@@ -173,7 +205,11 @@ export default function OnboardingPage() {
           suggestedCategories={onboardingPlan.suggestedCategories}
           onNext={(categories) => {
             setSelectedCategories(categories);
-            handleBusinessTypeNext(businessType, undefined, categories);
+            if (categories.length === 0 && !onboardingPlan.needsCategories) {
+              handleBusinessTypeNext(businessType, undefined, categories);
+            } else {
+              setStep(3.5);
+            }
           }}
           onSkip={() => handleBusinessTypeNext(businessType)}
         />
