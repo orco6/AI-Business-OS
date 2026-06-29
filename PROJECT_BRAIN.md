@@ -283,21 +283,29 @@ Welcome + Claude message
 
 ---
 
-## Sprint נוכחי - Sprint 9
+## Sprint נוכחי - Sprint 9 - Website Agent (בתהליך)
 
-**מה הושלם ב-Sprint 9 - Website Generation:**
-- ✅ Website Content Agent (Claude Sonnet 4.6) — תוכן שיווקי בעברית לפי Business Profile
-- ✅ `WebsiteData` model + שמירה ב-MongoDB על BusinessProfile
-- ✅ Theme/fonts לפי סוג עסק — עברית: heebo/frank-ruhl-libre/rubik/secular-one
-- ✅ API: `POST /api/website/generate`, `GET /api/website/{profileId}`, `DELETE /api/website/{profileId}/data` (ניקוי לרегенרציה)
-- ✅ Preview page: `/preview/[profileId]` — fetch או generate אוטומטי
-- ✅ Section components: Hero, About, Services, Gallery, Contact + Sticky WhatsApp
-- ✅ Hero gradient fallback (ללא תמונות) + טיפוגרפיה גדולה יותר
-- ✅ Hero navbar + layout דרמטי RTL + `businessName` ב-WebsiteData (C# + TS)
-- ✅ @fontsource Hebrew fonts (Heebo, Frank Ruhl Libre, Rubik, Secular One), Cloudinary images, RTL, scroll animations
+### מה הושלם:
+- ✅ Backend: WebsiteModels, WebsiteService (Content Agent), WebsiteController
+- ✅ POST /api/website/generate + GET /api/website/{profileId}
+- ✅ Hebrew Font System: Heebo, Frank Ruhl Libre, Secular One, Rubik (לפי סוג עסק)
+- ✅ Frontend: preview/[profileId] page, WebsiteRenderer, כל הקומפוננטות
+- ✅ HeroSection: navbar, dramatic typography, Ken Burns, gradient fallback
+- ✅ Gallery: CSS masonry desktop + scroll-snap mobile + CSS lightbox
+- ✅ Services: grid desktop + scroll-snap mobile
+- ✅ Sticky WhatsApp button
+
+### Test profiles:
+- חליליאן (ללא תמונות): `6a4186de072d43b88654b003`
+- מסעדת אור (עם תמונות): `6a4206bdb97e47e61e91538e`
+
+### מה נשאר:
+- שיפור ויזואלי - האתר עוד לא ברמה מרהיבה
+- Dashboard: כפתור "בנה את האתר שלי"
+- Loading screen
+- Section תפריט למסעדות
 
 **הצעד הבא - Sprint 10:**
-- Loading screen - "בונה את האתר שלך..." בין Welcome ל-Preview
 - חיבור Welcome screen → Preview אוטומטי
 - Subdomain routing (`[slug].ai-business-os.com`)
 - Research Agent - השראה מאתרים מובילים בתחום
