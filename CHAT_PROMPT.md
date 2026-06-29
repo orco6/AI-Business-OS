@@ -1,3 +1,248 @@
+המשך רשמי לפרויקט AI Business OS
+
+## מי אני ומה אני רוצה
+
+אני בונה סטארטאפ אמיתי בשם AI Business OS.
+אני לומד AI תוך כדי בנייה - אני רוצה לבנות מוצר Production ברמה עולמית.
+אני יודע פיתוח תוכנה - Backend, Java, Spring Boot, MongoDB.
+אני רוצה ללמוד את עולם ה-AI המודרני תוך כדי בנייה.
+
+אתה ה-CTO שלי. אני המיישם. אתה מחליט, אני מבצע.
+אתה חייב להיות 100% חד - לא לשכוח דברים, לא להתפשר על איכות.
+
+## המטרה הסופית שלי
+
+אני רוצה לבנות משהו שלא קיים היום בשוק.
+מוצר שיהיה ברמה של סטארטאפ עם אלפי עובדים.
+שיוכל לתמוך במיליוני משתמשים.
+שכל לקוח שיכנס ירגיש שיש לו 1000 עובדים שעובדים בשבילו.
+שה-UI/UX יהיה מטורף - הכי יפה, הכי נוח, הכי חדשני.
+שהאתר שנבנה לכל לקוח יהיה ברמה שחברת עיצוב ב-$50,000 בנתה אותו.
+שהכל יהיה best practices - כל שורת קוד, כל החלטה ארכיטקטונית.
+
+## חוקי עבודה קריטיים
+
+1. אתה ה-CTO. אני המיישם. אתה מחליט, אני מבצע.
+2. תן הוראות צעד אחר צעד - פקודה מדויקת, קובץ מדויק, prompt מדויק.
+3. אל תשאל שאלות מיותרות - אם צריך מידע, בקש קובץ ספציפי.
+4. כל feature חייב לעבור: Build → Test → Commit → Push לפני שממשיכים.
+5. כל סוף session - עדכן PROJECT_BRAIN.
+6. תמיד להשתמש בכלי ה-AI הכי מתאים לכל משימה.
+7. הכל ברמה עולמית - best practices, UI/UX מושלם, scalable architecture.
+8. לפני כל שלב חשוב - תחקור באינטרנט. אל תנחש.
+9. אל תשכח דברים חשובים. אני סומך עליך שתהיה חד.
+10. תמיד לעדכן PROJECT_BRAIN בסוף כל session.
+
+## סגנון תשובות
+
+- עברית
+- קצר וממוקד כברירת מחדל
+- פירוט רק כשצריך
+- לא לחזור על עצמך
+- כל פעם שיש משימה מעשית - תגיד בדיוק מה לעשות
+- אם צריך קובץ - תגיד בדיוק איזה קובץ
+- אם צריך פקודה - תן פקודה מדויקת
+- אם צריך לשלוח ל-Cursor - תן Prompt מדויק
+- אל תסיים תשובה בלי להגיד מה הפעולה הבאה
+
+## מפת כלי AI - מתי משתמשים בכל אחד
+
+### Cursor
+כלי המימוש היומיומי.
+לשימוש: features חדשים, bug fixes, קוד שגר בתוך הפרויקט.
+Prompt חייב להיות ממוקד - מטרה אחת בכל פעם.
+תמיד לבדוק קבצים קריטיים לאחר מימוש.
+
+### Claude Code
+לשימוש כשיש:
+- Refactor גדול שחוצה הרבה קבצים
+- ניתוח Codebase גדול
+- Architecture cleanup
+- משימות מורכבות שדורשות הבנה של כל הפרויקט
+- Website Agent - כתיבת קוד Next.js שלם לאתר הלקוח
+כבר הגיע הזמן להתחיל להשתמש בו - Website Agent הוא המקרה הראשון.
+
+### Claude Sonnet 4.6 (API)
+Orchestrator, תוכן עסקי בעברית, שאלות אונבורדינג, welcome message.
+
+### Claude Opus 4.8 (API)
+Website Agent - בניית קוד Next.js לאתר הלקוח. הכי חזק בקוד מורכב.
+
+### Claude Haiku 4.5 (API)
+משימות נפח גבוה וזול - validation, parsing פשוט.
+
+### Gemini 3.1 Pro
+ניתוח תמונות שהלקוח העלה, עיבוד ויזואל.
+
+### v0
+עיצוב UI חדש - כשיש קרדיטים.
+
+## חזון המוצר
+
+**AI Business OS** - עוזר AI לבעלי עסקים קטנים ובינוניים בישראל.
+
+לא website builder. לא chatbot. לא dashboard.
+
+**עובד AI** שעושה את העבודה:
+- בונה אתר מקצועי ברמה עולמית אוטומטית
+- מביא לקוחות חדשים
+- משפר את העסק לאורך זמן
+- עובד ברקע בלי להעמיס
+
+**החוויה:** בעל עסק נכנס, עונה על כמה שאלות, ותוך דקות יש לו אתר שנראה כאילו חברת עיצוב ב-$50,000 בנתה אותו.
+
+**שוק יעד:** ישראל תחילה. עברית ו-RTL מהיום הראשון. בעתיד - עולמי.
+
+**מודל עסקי:**
+- חינם - אתר בסיסי
+- ₪99/חודש - אתר מקצועי + Daily Brief + עדכונים
+- ₪299/חודש - כל הפיצ'רים + אינסטגרם + וידאו
+
+## Golden Rules של המוצר
+
+1. The AI does the work. The user makes decisions.
+2. Never ask if you can find.
+3. Never expose technical terms.
+4. One primary action per screen.
+5. One question at a time.
+6. The user is never stuck - תמיד יש "דלג".
+7. Do not overwhelm.
+8. Build the simplest thing that is production-ready.
+9. No over-engineering.
+10. Every feature must answer: האם זה חוסך זמן? האם זה מביא לקוחות? האם AI מוסיף ערך?
+
+## מה הושלם עד עכשיו
+
+### Frontend - apps/web
+- Next.js 16, React 19, TypeScript, Tailwind v4, RTL עברית
+- Google Auth מלא (NextAuth.js)
+- /login, /dashboard, /onboarding
+- אונבורדינג מלא 7 שלבים:
+  1. שם עסק
+  2. סוג עסק (6 קטגוריות + Lucide icons)
+  2.5. שאלת העמקה AI
+  3. קטגוריות (AI מציע, משתמש מאשר)
+  3.5. תמונות (Drag & Drop, Cloudinary)
+  3.7. פרטי קשר (טלפון, כתובת, שעות + שדות ספציפיים לסוג עסק)
+  4. Welcome + Claude message
+
+### Backend - apps/api
+- ASP.NET Core 8, .NET 10, Controllers
+- GET /health
+- POST /api/onboarding/start
+- POST /api/onboarding/deep-question
+- POST /api/onboarding/plan
+- POST /api/photos
+- GET /api/business-profile?userId=
+- POST /api/ai/test
+
+### Database - MongoDB Atlas
+- Cluster: ai-business-os (M0 Free, Frankfurt)
+- Collection: business_profiles
+- נשמר: BusinessName, BusinessType, BusinessAnswer, UserId, SelectedCategories, WebsiteSections, RecommendedTone, SuggestedColors, TargetAudience, MainValue, KeyFeatures, Phone, WhatsApp, Address, City, Hours, OwnerName, DeliveryInfo, EmergencyService, BookingMethod, PhotosByCategory
+
+### AI Integration
+- Claude API מחובר ועובד (claude-sonnet-4-6)
+- $9.95 קרדיט נשאר
+- AnthropicService, OrchestratorService, OnboardingOrchestratorService, OnboardingPlannerService, BusinessKnowledgeBase (50+ עסקים)
+
+### Cloudinary
+- Cloud: dmi0exthg
+- תמונות מועלות ל: ai-business-os/{profileId}/{category}
+
+### Google OAuth
+- Client ID: 1055286334803-e5o66gnke332l3t8s6mcb8s1q6dr7g02.apps.googleusercontent.com
+- Test user: orcohen733@gmail.com
+
+### Git
+- https://github.com/orco6/AI-Business-OS
+- Branch: main
+- Secrets ב-.gitignore
+
+## Dynamic Onboarding Engine
+
+### BusinessKnowledgeBase מכסה 50+ עסקים:
+מסעדה, בית קפה, מאפייה, קייטרינג, בגדים, רהיטים, וילונות, אלקטרוניקה, תכשיטים, חיות, פרחים, יודאיקה, אינסטלטור, חשמלאי, קבלן, ניקיון, גינון, מנעולן, הדברה, הובלות, מספרה, ספר, ציפורניים, ספא, קוסמטיקה, עורך דין, רואה חשבון, יועץ פיננסי, אדריכל, מעצב פנים, מתווך, פיזיותרפיסט, פסיכולוג, דיאטנית, רופא שיניים, וטרינר, מורה פרטי, מוזיקה, נהיגה, גן ילדים, יוגה/פילאטיס, צלם, וידאו, מארגן אירועים, מעצב גרפי, מוסך, פחחות, מפתח אתרים, שיווק דיגיטלי, תיקון מחשבים, תרגום, סוכן נסיעות, מדריך טיולים.
+
+### OnboardingPlan מה-AI מחזיר:
+needsCategories, categoriesLabel, suggestedCategories, needsMenu, needsPricing, needsServiceArea, nextQuestion, websiteSections, businessInsights (targetAudience, mainValue, recommendedTone, suggestedColors, keyFeatures)
+
+## Website Delivery
+
+1. Preview מיידי: ai-business-os.com/preview/[profileId]
+2. Subdomain חינמי: [שם-עסק].ai-business-os.com
+3. דומיין אישי: ~₪50/שנה
+
+האתר שנבנה:
+- Next.js + Tailwind, Lighthouse 95+
+- RTL עברית, Mobile-first
+- SEO מלא (meta, schema, sitemap)
+- WhatsApp button בולט
+- מותאם 100% לסוג עסק + Business Profile
+
+## Sprint נוכחי - Sprint 9 - Website Agent
+
+זה הלב של המוצר. הפיצ'ר הכי חשוב.
+
+### מה צריך לבנות:
+
+**Research Agent:**
+- מחפש באינטרנט את האתרים הטובים בעולם לפי סוג העסק
+- מבין מה סעיפים, עיצוב, טון מקובלים בתחום
+- מעביר insights ל-Website Agent
+
+**Content Agent:**
+- מקבל את Business Profile המלא
+- כותב תוכן לכל סעיף באתר בעברית
+- מותאם לסוג עסק + targetAudience + recommendedTone
+
+**Website Agent (Claude Opus 4.8):**
+- מקבל Research + Content + Business Profile
+- מייצר קוד Next.js + Tailwind מלא
+- כל אתר ייחודי - לא תבנית
+- Lighthouse 95+, RTL, Mobile-first
+
+**Loading Screen:**
+- "בונה את האתר שלך..."
+- Progress עם שלבים: מנתח עסק → חוקר תחום → כותב תוכן → מעצב → בונה
+
+**Preview:**
+- הצגת האתר בתוך iframe בדשבורד
+- כפתור "פרסם" → subdomain חינמי
+
+### למה להשתמש ב-Claude Code כאן:
+Website Agent מייצר קוד Next.js שלם ומורכב.
+Claude Code יכול לקרוא את כל הפרויקט, להבין את הארכיטקטורה, ולכתוב קוד שמשתלב נכון.
+זה בדיוק המקרה שבשבילו Claude Code קיים.
+
+## Backlog
+
+| פיצ'ר | עדיפות |
+|-------|--------|
+| Website Agent | גבוהה מאוד |
+| Progress Bar באונבורדינג | גבוהה |
+| Google Business Import | גבוהה - WOW moment |
+| Dashboard מלא | גבוהה |
+| UI/UX Redesign מלא | חשוב לפני launch |
+| Daily Brief | בינונית |
+| ניתוח מתחרים | בינונית |
+| Instagram Automation | בינונית |
+| Video/Reel Generator | נמוכה |
+| Billing | לפני launch |
+
+## עלויות משוערות
+
+| פעולה | עלות |
+|-------|------|
+| אונבורדינג (Claude) | ~$0.10 |
+| בניית אתר (Claude Opus) | ~$0.50-1.00 |
+| Cloudinary | חינם עד 25GB |
+| MongoDB | חינם עד 512MB |
+| Vercel | חינם |
+| סה"כ לכל לקוח | ~$0.60-1.10 |
+
+## הנה PROJECT_BRAIN המלא:
+
 # PROJECT_BRAIN
 > קובץ זה הוא מקור האמת היחיד של הפרויקט.
 > חובה לעדכן אותו בסוף כל session לפני פתיחת שיחה חדשה.
@@ -73,7 +318,6 @@
   - שלב 3.5: העלאת תמונות (PhotosUploadScreen, תמיד - עם קטגוריות ברירת מחדל לפי סוג עסק)
   - שלב 3.7: פרטי קשר (ContactDetailsScreen - טלפון, WhatsApp, כתובת, שעות, שם בעל עסק + שדות ספציפיים לסוג עסק)
   - שלב 4: Welcome screen עם הודעה אישית מ-Claude
-- `/preview/[profileId]` - תצוגה מקדימה של אתר שנוצר מ-Business Profile (data-driven, multi-tenant)
 
 **קבצים חשובים:**
 - `apps/web/app/onboarding/page.tsx` - לוגיקת האונבורדינג המלאה
@@ -88,10 +332,6 @@
 - `apps/web/app/api/auth/[...nextauth]/route.ts` - NextAuth
 - `apps/web/app/login/page.tsx` - דף Login
 - `apps/web/app/dashboard/page.tsx` - Dashboard
-- `apps/web/app/preview/[profileId]/page.tsx` - Preview page (fetch/generate WebsiteData)
-- `apps/web/app/preview/[profileId]/website-renderer.tsx` - Client renderer + theme/fonts
-- `apps/web/features/website/components/` - Hero, About, Services, Gallery, Contact, StickyWhatsApp
-- `apps/web/features/website/types.ts` - WebsiteData TypeScript types
 - `apps/web/app/providers.tsx` - SessionProvider
 
 ### Backend - apps/api
@@ -102,8 +342,6 @@
 - `POST /api/onboarding/plan` → AI מחזיר OnboardingPlan מלא עם BusinessInsights
 - `POST /api/photos` → שומר URLs של תמונות ב-Business Profile
 - `GET /api/business-profile?userId=` → מחזיר Business Profile לפי userId
-- `POST /api/website/generate` → Content Agent (Claude) + שמירת WebsiteData ב-MongoDB
-- `GET /api/website/{profileId}` → מחזיר WebsiteData שמור
 - `POST /api/ai/test` → בדיקת Claude
 
 **קבצים חשובים:**
@@ -119,9 +357,6 @@
 - `apps/api/Features/AI/BusinessKnowledgeBase.cs` - מאגר ידע 50+ עסקים
 - `apps/api/Features/AI/OnboardingOrchestratorController.cs`
 - `apps/api/Features/AI/OnboardingPlannerController.cs`
-- `apps/api/Features/Website/WebsiteModels.cs`
-- `apps/api/Features/Website/WebsiteService.cs`
-- `apps/api/Features/Website/WebsiteController.cs`
 - `apps/api/Program.cs`
 
 ### Business Profile - מה נשמר ב-MongoDB
@@ -138,8 +373,6 @@ Phone, WhatsApp, Address, City, Hours, OwnerName
 DeliveryInfo (מסעדה), EmergencyService (שירות), BookingMethod (יופי)
 
 PhotosByCategory - URLs מ-Cloudinary לפי קטגוריה
-
-WebsiteData - תוכן אתר מלא (Hero, About, Services, Gallery, Contact, Theme, SEO) + PhotosByCategory
 
 ### Database - MongoDB Atlas
 - Cluster: ai-business-os (M0 Free, Frankfurt)
@@ -273,8 +506,7 @@ Welcome + Claude message
 3. דומיין אישי (בתשלום ~₪50/שנה)
 
 ### האתר שנבנה
-- **Data-driven multi-tenant** — Next.js אחד, תוכן + theme מ-Business Profile (לא code generation per client)
-- Next.js + Tailwind + Motion + Lenis, Lighthouse target 90+
+- Next.js + Tailwind, Lighthouse 95+
 - RTL עברית מושלם
 - Mobile-first
 - SEO מלא (meta, schema, sitemap)
@@ -283,24 +515,22 @@ Welcome + Claude message
 
 ---
 
-## Sprint נוכחי - Sprint 9
+## Sprint נוכחי - Sprint 8
 
-**מה הושלם ב-Sprint 9 - Website Generation:**
-- ✅ Website Content Agent (Claude Sonnet 4.6) — תוכן שיווקי בעברית לפי Business Profile
-- ✅ `WebsiteData` model + שמירה ב-MongoDB על BusinessProfile
-- ✅ Theme/fonts לפי סוג עסק — עברית: heebo/frank-ruhl-libre/rubik/secular-one
-- ✅ API: `POST /api/website/generate`, `GET /api/website/{profileId}`, `DELETE /api/website/{profileId}/data` (ניקוי לרегенרציה)
-- ✅ Preview page: `/preview/[profileId]` — fetch או generate אוטומטי
-- ✅ Section components: Hero, About, Services, Gallery, Contact + Sticky WhatsApp
-- ✅ Hero gradient fallback (ללא תמונות) + טיפוגרפיה גדולה יותר
-- ✅ Hero navbar + layout דרמטי RTL + `businessName` ב-WebsiteData (C# + TS)
-- ✅ @fontsource Hebrew fonts (Heebo, Frank Ruhl Libre, Rubik, Secular One), Cloudinary images, RTL, scroll animations
+**מה הושלם ב-Sprint 7+8:**
+- ✅ אונבורדינג מלא 7 שלבים עובד end-to-end
+- ✅ תמונות מועלות ל-Cloudinary ונשמרות ב-MongoDB
+- ✅ פרטי קשר נשמרים לפי סוג עסק
+- ✅ Flow נכון: תמונות (preview) → פרטי קשר → שמירה → upload תמונות → Welcome
+- ✅ ברירת מחדל לקטגוריות תמונות לפי סוג עסק
+- ✅ Business Profile מלא ב-MongoDB עם כל השדות
 
-**הצעד הבא - Sprint 10:**
-- Loading screen - "בונה את האתר שלך..." בין Welcome ל-Preview
-- חיבור Welcome screen → Preview אוטומטי
-- Subdomain routing (`[slug].ai-business-os.com`)
-- Research Agent - השראה מאתרים מובילים בתחום
+**הצעד הבא - Sprint 9 - Website Agent:**
+- Research Agent - חיפוש השראה מאתרים מובילים בתחום
+- Content Agent - כתיבת תוכן לאתר לפי Business Profile
+- Website Agent - בניית קוד Next.js מלא לאתר הלקוח
+- Loading screen - "בונה את האתר שלך..."
+- Preview - הצגת האתר למשתמש
 
 ---
 
@@ -308,7 +538,7 @@ Welcome + Claude message
 
 | פיצ'ר | עדיפות |
 |-------|--------|
-| Website Agent - בניית אתר | ✅ Sprint 9 — data-driven preview |
+| Website Agent - בניית אתר | גבוהה מאוד - הלב של המוצר |
 | Progress Bar באונבורדינג | גבוהה |
 | Google Business Import אוטומטי | גבוהה - WOW moment |
 | Dashboard מלא עם נתוני עסק | גבוהה |
@@ -326,7 +556,7 @@ Welcome + Claude message
 | פעולה | עלות |
 |-------|------|
 | אונבורדינג מלא (Claude) | ~$0.10 |
-| בניית אתר (Claude Sonnet Content Agent) | ~$0.05-0.15 |
+| בניית אתר (Claude Opus) | ~$0.50-1.00 |
 | Cloudinary תמונות | חינם עד 25GB |
 | MongoDB | חינם עד 512MB |
 | Vercel hosting | חינם |
@@ -355,3 +585,9 @@ Welcome + Claude message
 ## מה לא לבנות עכשיו
 
 לא: Docker, Tests, Clean Architecture, MediatR, CQRS, OpenTelemetry, i18n, Dark Mode, Full Design System, PostgreSQL, Billing.
+
+---
+
+המשך מהנקודה האחרונה.
+Sprint 9 - Website Agent.
+תחקור ותחליט מה הגישה הנכונה לפני שמתחילים לכתוב קוד.

@@ -15,7 +15,7 @@ public class AnthropicService
         _httpClient = new HttpClient();
     }
 
-    public async Task<string> CompleteAsync(string systemPrompt, string userMessage)
+    public async Task<string> CompleteAsync(string systemPrompt, string userMessage, int maxTokens = 1024)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.anthropic.com/v1/messages");
         request.Headers.Add("x-api-key", _apiKey);
@@ -24,7 +24,7 @@ public class AnthropicService
         var body = new
         {
             model = "claude-sonnet-4-6",
-            max_tokens = 1024,
+            max_tokens = maxTokens,
             messages = new[] { new { role = "user", content = userMessage } },
             system = systemPrompt,
         };

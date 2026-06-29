@@ -1,5 +1,6 @@
 using Api.Features.AI;
 using Api.Features.Onboarding;
+using Api.Features.Website;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,7 @@ builder.Services.AddScoped<OrchestratorService>();
 builder.Services.AddScoped<OnboardingOrchestratorService>();
 builder.Services.AddScoped<OnboardingPlannerService>();
 builder.Services.AddScoped<OnboardingService>();
+builder.Services.AddScoped<WebsiteService>();
 
 var app = builder.Build();
 

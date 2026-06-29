@@ -1,3 +1,4 @@
+using Api.Features.Website;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -37,4 +38,5 @@ public class BusinessProfile
     public string BookingMethod { get; set; } = string.Empty;
     public string ServiceArea { get; set; } = string.Empty;
     public Dictionary<string, List<string>> PhotosByCategory { get; set; } = new();
+    public WebsiteData? WebsiteData { get; set; }
 }

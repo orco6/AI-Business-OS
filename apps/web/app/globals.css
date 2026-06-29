@@ -48,6 +48,57 @@
   .onboarding-enter {
     animation: none;
   }
+
+  .whatsapp-pulse::before {
+    animation: none;
+  }
+
+  .ken-burns {
+    animation: none !important;
+  }
+}
+
+@keyframes kenBurns {
+  from {
+    transform: scale(1) translate(0, 0);
+  }
+  to {
+    transform: scale(1.08) translate(-1%, 1%);
+  }
+}
+
+.ken-burns {
+  animation: kenBurns 20s ease-in-out infinite alternate;
+}
+
+.scroll-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes whatsapp-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.whatsapp-pulse::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: #25d366;
+  animation: whatsapp-pulse-ring 2s ease-out infinite;
+  z-index: -1;
 }
 
 @layer base {
