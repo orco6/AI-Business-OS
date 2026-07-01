@@ -6,6 +6,8 @@ import {
   type ChangeEvent,
   type DragEvent,
   type FormEvent,
+  type MutableRefObject,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -14,6 +16,8 @@ const MAX_PHOTOS_PER_CATEGORY = 10;
 
 type PhotosUploadScreenProps = {
   categories: string[];
+  businessType: string;
+  beforeAfterCategories: string[];
   businessName: string;
   profileId: string;
   onNext: (uploadedPhotos: Record<string, string[]>) => void;
@@ -29,16 +33,143 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
+function buildBeforeAfterKeys(categories: string[]): string[] {
+  return categories.flatMap((category) => [
+    `לפני - ${category}`,
+    `אחרי - ${category}`,
+  ]);
+}
+
+function CategoryUploadArea({
+  category,
+  photos,
+  dragOverCategory,
+  inputRefs,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onFilesSelected,
+}: {
+  category: string;
+  photos: string[];
+  dragOverCategory: string | null;
+  inputRefs: MutableRefObject<Record<string, HTMLInputElement | null>>;
+  onDragOver: (category: string, event: DragEvent<HTMLDivElement>) => void;
+  onDragLeave: (event: DragEvent<HTMLDivElement>) => void;
+  onDrop: (category: string, event: DragEvent<HTMLDivElement>) => void;
+  onFilesSelected: (
+    category: string,
+    event: ChangeEvent<HTMLInputElement>,
+  ) => void;
+}) {
+  const inputId = `photos-${category.replace(/\s+/g, "-")}`;
+
+  return (
+    <section key={category} aria-labelledby={inputId}>
+      <label
+        htmlFor={inputId}
+        className="mb-3 block text-sm font-medium text-foreground"
+      >
+        {category}
+      </label>
+
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => inputRefs.current[category]?.click()}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            inputRefs.current[category]?.click();
+          }
+        }}
+        onDragOver={(event) => onDragOver(category, event)}
+        onDragLeave={onDragLeave}
+        onDrop={(event) => onDrop(category, event)}
+        className={cn(
+          "flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-8 text-center transition-colors",
+          dragOverCategory === category
+            ? "border-primary bg-primary/5"
+            : "border-border bg-card hover:border-primary/40",
+        )}
+      >
+        <p className="text-sm font-medium text-foreground">
+          גרור תמונות לכאן או לחץ לבחירה
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          עד 10 תמונות לקטגוריה
+        </p>
+      </div>
+
+      <input
+        ref={(element) => {
+          inputRefs.current[category] = element;
+        }}
+        id={inputId}
+        type="file"
+        accept="image/*"
+        multiple
+        className="sr-only"
+        onChange={(event) => void onFilesSelected(category, event)}
+      />
+
+      {photos.length > 0 ? (
+        <ul
+          className="mt-3 flex flex-wrap gap-2"
+          aria-label={`תצוגה מקדימה - ${category}`}
+        >
+          {photos.map((photo, index) => (
+            <li key={`${category}-${index}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={photo}
+                alt={`${category} ${index + 1}`}
+                className="size-20 rounded-lg object-cover"
+                width={80}
+                height={80}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
+
 export function PhotosUploadScreen({
   categories,
+  businessType: _businessType,
+  beforeAfterCategories,
   businessName: _businessName,
   profileId,
   onNext,
   onSkip,
 }: PhotosUploadScreenProps) {
+  const regularCategories = useMemo(
+    () =>
+      categories.filter(
+        (category) =>
+          !beforeAfterCategories.includes(category) &&
+          !category.includes("לפני ואחרי"),
+      ),
+    [categories, beforeAfterCategories],
+  );
+
+  const beforeAfterKeys = useMemo(
+    () => buildBeforeAfterKeys(beforeAfterCategories),
+    [beforeAfterCategories],
+  );
+
+  const allUploadCategories = useMemo(
+    () => [...regularCategories, ...beforeAfterKeys],
+    [regularCategories, beforeAfterKeys],
+  );
+
   const [photosByCategory, setPhotosByCategory] = useState<
     Record<string, string[]>
-  >(() => Object.fromEntries(categories.map((category) => [category, []])));
+  >(() =>
+    Object.fromEntries(allUploadCategories.map((category) => [category, []])),
+  );
   const [isUploading, setIsUploading] = useState(false);
   const [dragOverCategory, setDragOverCategory] = useState<string | null>(
     null,
@@ -98,7 +229,7 @@ export function PhotosUploadScreen({
 
     try {
       const uploadEntries = await Promise.all(
-        categories
+        allUploadCategories
           .filter((category) => (photosByCategory[category] ?? []).length > 0)
           .map(async (category) => {
             const photos = photosByCategory[category] ?? [];
@@ -156,83 +287,56 @@ export function PhotosUploadScreen({
 
         <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
           <div className="flex flex-col gap-8">
-            {categories.map((category) => {
-              const photos = photosByCategory[category] ?? [];
-              const inputId = `photos-${category}`;
+            {regularCategories.map((category) => (
+              <CategoryUploadArea
+                key={category}
+                category={category}
+                photos={photosByCategory[category] ?? []}
+                dragOverCategory={dragOverCategory}
+                inputRefs={inputRefs}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onFilesSelected={handleFilesSelected}
+              />
+            ))}
 
-              return (
-                <section key={category} aria-labelledby={inputId}>
-                  <label
-                    htmlFor={inputId}
-                    className="mb-3 block text-sm font-medium text-foreground"
-                  >
-                    {category}
-                  </label>
+            {beforeAfterCategories.length > 0 ? (
+              <div className="flex flex-col gap-6">
+                <p className="text-sm font-medium text-foreground">
+                  תמונות לפני ואחרי — הכי חזק שיש לשכנע לקוחות חדשים
+                </p>
+                {beforeAfterCategories.map((baseCategory) => {
+                  const beforeKey = `לפני - ${baseCategory}`;
+                  const afterKey = `אחרי - ${baseCategory}`;
 
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => inputRefs.current[category]?.click()}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        inputRefs.current[category]?.click();
-                      }
-                    }}
-                    onDragOver={(event) => handleDragOver(category, event)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(event) => handleDrop(category, event)}
-                    className={cn(
-                      "flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-8 text-center transition-colors",
-                      dragOverCategory === category
-                        ? "border-primary bg-primary/5"
-                        : "border-border bg-card hover:border-primary/40",
-                    )}
-                  >
-                    <p className="text-sm font-medium text-foreground">
-                      גרור תמונות לכאן או לחץ לבחירה
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      עד 10 תמונות לקטגוריה
-                    </p>
-                  </div>
-
-                  <input
-                    ref={(element) => {
-                      inputRefs.current[category] = element;
-                    }}
-                    id={inputId}
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="sr-only"
-                    onChange={(event) =>
-                      void handleFilesSelected(category, event)
-                    }
-                  />
-
-                  {photos.length > 0 ? (
-                    <ul
-                      className="mt-3 flex flex-wrap gap-2"
-                      aria-label={`תצוגה מקדימה - ${category}`}
-                    >
-                      {photos.map((photo, index) => (
-                        <li key={`${category}-${index}`}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={photo}
-                            alt={`${category} ${index + 1}`}
-                            className="size-20 rounded-lg object-cover"
-                            width={80}
-                            height={80}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </section>
-              );
-            })}
+                  return (
+                    <div key={baseCategory} className="flex flex-col gap-6">
+                      <CategoryUploadArea
+                        category={beforeKey}
+                        photos={photosByCategory[beforeKey] ?? []}
+                        dragOverCategory={dragOverCategory}
+                        inputRefs={inputRefs}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onFilesSelected={handleFilesSelected}
+                      />
+                      <CategoryUploadArea
+                        category={afterKey}
+                        photos={photosByCategory[afterKey] ?? []}
+                        dragOverCategory={dragOverCategory}
+                        inputRefs={inputRefs}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onFilesSelected={handleFilesSelected}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
 
           <div className="mt-auto flex flex-col gap-3 pt-8">

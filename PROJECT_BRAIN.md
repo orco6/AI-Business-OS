@@ -65,13 +65,15 @@
 - Google Auth (NextAuth.js) מלא
 - `/login` - דף התחברות עם Google
 - `/dashboard` - דשבורד מציג שם משתמש + נתוני עסק אמיתיים מ-MongoDB + כפתור "בנה את האתר שלי" → generate + preview
-- `/onboarding` - אונבורדינג מלא 7 שלבים:
+- `/onboarding` - אונבורדינג מלא 9 שלבים:
   - שלב 1: שם עסק
   - שלב 2: סוג עסק (6 קטגוריות עם Lucide icons)
   - שלב 2.5: שאלת העמקה AI (DeepQuestionScreen)
   - שלב 3: קטגוריות (CategoriesScreen, רק אם plan.needsCategories)
-  - שלב 3.5: העלאת תמונות (PhotosUploadScreen, תמיד - עם קטגוריות ברירת מחדל לפי סוג עסק)
-  - שלב 3.7: פרטי קשר (ContactDetailsScreen - טלפון, WhatsApp, כתובת, שעות, שם בעל עסק + שדות ספציפיים לסוג עסק)
+  - שלב 3.5: העלאת תמונות (PhotosUploadScreen — קטגוריות לפי סוג עסק + לפני/אחרי ליופי/שירותים ויזואליים)
+  - שלב 3.6: שאלות ספציפיות לסוג עסק (BusinessSpecificScreen — תפריט, מחירון, אזור שירות, Instagram וכו')
+  - שלב 3.7: פרטי קשר (ContactDetailsScreen — טלפון, WhatsApp, כתובת, שעות, שם בעל עסק)
+  - שלב 3.8: הוכחה חברתית (SocialProofScreen — screenshots המלצות + סטטיסטיקות)
   - שלב 4: Welcome screen עם הודעה אישית מ-Claude
 - `/preview/[profileId]` - תצוגה מקדימה של אתר שנוצר מ-Business Profile (data-driven, multi-tenant)
 
@@ -81,8 +83,10 @@
 - `apps/web/features/onboarding/components/business-type-screen.tsx` - שלב 2
 - `apps/web/features/onboarding/components/deep-question-screen.tsx` - שאלת העמקה
 - `apps/web/features/onboarding/components/categories-screen.tsx` - קטגוריות
-- `apps/web/features/onboarding/components/photos-upload-screen.tsx` - תמונות
+- `apps/web/features/onboarding/components/photos-upload-screen.tsx` - תמונות (+ לפני/אחרי)
+- `apps/web/features/onboarding/components/business-specific-screen.tsx` - שאלות לפי סוג עסק
 - `apps/web/features/onboarding/components/contact-details-screen.tsx` - פרטי קשר
+- `apps/web/features/onboarding/components/social-proof-screen.tsx` - המלצות לקוחות
 - `apps/web/features/onboarding/components/welcome-screen.tsx` - Welcome
 - `apps/web/app/api/upload/route.ts` - Cloudinary upload API route
 - `apps/web/app/api/auth/[...nextauth]/route.ts` - NextAuth
@@ -90,7 +94,7 @@
 - `apps/web/app/dashboard/page.tsx` - Dashboard
 - `apps/web/app/preview/[profileId]/page.tsx` - Preview page (fetch/generate WebsiteData)
 - `apps/web/app/preview/[profileId]/website-renderer.tsx` - Client renderer + theme/fonts
-- `apps/web/features/website/components/` - Hero, About, Services, Gallery, Contact, StickyWhatsApp
+- `apps/web/features/website/components/` - Hero (hamburger nav), Numbers, About, Menu, Services, SocialProof, Gallery, Contact, StickyWhatsApp
 - `apps/web/features/website/types.ts` - WebsiteData TypeScript types
 - `apps/web/app/providers.tsx` - SessionProvider
 
@@ -139,7 +143,7 @@ DeliveryInfo (מסעדה), EmergencyService (שירות), BookingMethod (יופ�
 
 PhotosByCategory - URLs מ-Cloudinary לפי קטגוריה
 
-WebsiteData - תוכן אתר מלא (Hero, About, Services, Gallery, Contact, Theme, SEO) + PhotosByCategory
+WebsiteData - תוכן אתר מלא (Hero, About, Services, Gallery, Contact, Theme, SEO, Numbers, SocialProof, Menu, Navbar, InstagramUrl) + PhotosByCategory
 
 ### Database - MongoDB Atlas
 - Cluster: ai-business-os (M0 Free, Frankfurt)
@@ -283,32 +287,39 @@ Welcome + Claude message
 
 ---
 
-## Sprint נוכחי - Sprint 9 - Website Agent (בתהליך)
+## Sprint נוכחי - Sprint 10 - Website Quality
 
-### מה הושלם:
-- ✅ Backend: WebsiteModels, WebsiteService (Content Agent), WebsiteController
-- ✅ POST /api/website/generate + GET /api/website/{profileId}
-- ✅ Hebrew Font System: Heebo, Frank Ruhl Libre, Secular One, Rubik (לפי סוג עסק)
-- ✅ Frontend: preview/[profileId] page, WebsiteRenderer, כל הקומפוננטות
-- ✅ HeroSection: navbar, dramatic typography, Ken Burns, gradient fallback
-- ✅ Gallery: CSS masonry desktop + scroll-snap mobile + CSS lightbox
-- ✅ Services: grid desktop + scroll-snap mobile
-- ✅ Sticky WhatsApp button
-- ✅ Mobile spacing fix: section padding `py-16 sm:py-32 lg:py-40`, header gaps responsive (was `py-32`/`mb-20` causing empty screens on 375px)
+### מה הושלם ב-Sprint 9:
+- ✅ Backend Website Agent: WebsiteService, WebsiteController, Content Agent (Claude Sonnet)
+- ✅ Hebrew Font System: Heebo Variable לכל האתר (heading + body)
+- ✅ Frontend: כל הקומפוננטות - Hero, About, Services, Gallery, Contact, StickyWhatsApp
+- ✅ Hero: navbar scroll-aware, Ken Burns, scroll indicator, dramatic typography
+- ✅ Gallery: CSS masonry desktop + scroll-snap mobile + CSS :target lightbox
+- ✅ Services: dark section + editorial cards
+- ✅ Mobile fix: החלפת whileInView ב-useInView hook (Safari iOS bug)
+- ✅ Mobile fix: h-screen → h-dvh (Safari viewport bug)
+- ✅ Dashboard: כפתור "בנה את האתר שלי" + navigation לpreview
+- ✅ website_ai_knowledge/ - knowledge base עם 11 קבצי best practices
+- ✅ Test profile: מסעדת אור - 6a4206bdb97e47e61e91538e
 
-### Test profiles:
-- חליליאן (ללא תמונות): `6a4186de072d43b88654b003`
-- מסעדת אור (עם תמונות): `6a4206bdb97e47e61e91538e`
+### מה הושלם ב-Sprint 10 (Website Agent Upgrade):
+- ✅ WebsiteData models: SocialProof, Numbers, Menu, NavbarConfig + InstagramUrl
+- ✅ WebsiteService: בונה Numbers/SocialProof/Menu/Navbar מ-BusinessProfile; Claude prompt (socialProofReviews, ללא menuCategories מומצאים)
+- ✅ Frontend: NumbersSection (CSS fade-in stats + Safari fallback), SocialProofSection, MenuSection (menuUrl + הזמנות בלבד, ללא tabs)
+- ✅ Hero: hamburger fullscreen nav overlay — sibling to section (Safari iOS overflow-hidden fix); Ken Burns overflow on inner wrapper only
+- ✅ Mobile fixes: Numbers forceShow fallback, onboarding button click validation (no disabled attr), menu לא ממציא מנות
+- ✅ website-renderer: סדר סקשנים חדש (Hero → Numbers → About → Menu → Services → SocialProof → Gallery → Contact)
+- ✅ Section anchor IDs: #about, #menu, #gallery, #contact
+- ✅ Visual review fixes: Hero RTL nav (hamburger right), Numbers CSS fade (Safari), SocialProof layout + mobile scroll, Menu padding
+- ✅ Hamburger menu overlay: slide-in + staggered link animations, glassmorphism background, premium typography/separators, smooth scroll-to-section on nav click
 
-### מה נשאר:
-- שיפור ויזואלי - האתר עוד לא ברמה מרהיבה — **בסיס ידע:** `website_ai_knowledge/` (כללי execution quality לרכיבים קיימים)
-- Loading screen
-- Section תפריט למסעדות
-
-**הצעד הבא - Sprint 10:**
-- חיבור Welcome screen → Preview אוטומטי
-- Subdomain routing (`[slug].ai-business-os.com`)
-- Research Agent - השראה מאתרים מובילים בתחום
+### מה נשאר - Sprint 10:
+- שיפור ויזואלי מעמיק של כל הקומפוננטות
+- About section: layout חזק יותר
+- Services: cards עם יותר character
+- Gallery: full-bleed dramatic moment
+- Contact: שיפור ויזואלי
+- Loading screen בזמן generation
 
 ---
 

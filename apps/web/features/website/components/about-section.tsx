@@ -23,7 +23,7 @@ export function AboutSection({ about, photosByCategory }: AboutSectionProps) {
     null;
 
   return (
-    <section ref={ref} className="px-6 py-16 sm:py-32 lg:py-40">
+    <section ref={ref} id="about" className="px-6 py-16 sm:py-32 lg:py-40">
       <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
         <motion.div
           animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}

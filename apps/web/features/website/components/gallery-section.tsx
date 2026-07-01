@@ -28,6 +28,7 @@ export function GallerySection({ gallery }: GallerySectionProps) {
   return (
     <section
       ref={ref}
+      id="gallery"
       className="bg-[var(--color-bg)] py-16 sm:py-32 lg:py-40"
       aria-labelledby="gallery-heading"
     >

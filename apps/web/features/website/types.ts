@@ -52,6 +52,59 @@ export type SeoConfig = {
   keywords: string[];
 };
 
+export type SocialProofSection = {
+  title: string;
+  screenshotUrls: string[];
+  reviews: ReviewItem[];
+};
+
+export type ReviewItem = {
+  text: string;
+  author: string;
+  stars: number;
+};
+
+export type NumbersSection = {
+  title: string;
+  stats: StatItem[];
+};
+
+export type StatItem = {
+  value: string;
+  label: string;
+};
+
+export type MenuSection = {
+  title: string;
+  menuUrl: string;
+  categories: MenuCategory[];
+  hasReservations: boolean;
+  reservationLink: string;
+  reservationPhone: string;
+};
+
+export type MenuCategory = {
+  name: string;
+  items: MenuItem[];
+};
+
+export type MenuItem = {
+  name: string;
+  description: string;
+  price: string;
+};
+
+export type NavLink = {
+  label: string;
+  href: string;
+};
+
+export type NavbarConfig = {
+  links: NavLink[];
+  ctaText: string;
+  ctaHref: string;
+};
+
 export type WebsiteData = {
   hero: HeroSection;
   about: AboutSection;
@@ -64,6 +117,11 @@ export type WebsiteData = {
   businessSlug: string;
   generatedAt: string;
   photosByCategory: Record<string, string[]>;
+  socialProof?: SocialProofSection;
+  numbers?: NumbersSection;
+  menu?: MenuSection;
+  navbar?: NavbarConfig;
+  instagramUrl?: string;
 };
 
 export const API_BASE = "http://localhost:5063";

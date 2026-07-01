@@ -37,6 +37,47 @@ public class BusinessProfile
     public string EmergencyService { get; set; } = string.Empty;
     public string BookingMethod { get; set; } = string.Empty;
     public string ServiceArea { get; set; } = string.Empty;
+
+    // Restaurant
+    public string MenuUrl { get; set; } = string.Empty;
+    public bool HasReservations { get; set; }
+    public string ReservationLink { get; set; } = string.Empty;
+    public string CuisineType { get; set; } = string.Empty;
+
+    // Beauty / Barber
+    public string PricingList { get; set; } = string.Empty;
+    public string TeamSize { get; set; } = string.Empty;
+
+    // Services
+    public bool Emergency24_7 { get; set; }
+    public string LicenseNumber { get; set; } = string.Empty;
+    public string Specialization { get; set; } = string.Empty;
+
+    // Education
+    public string Subjects { get; set; } = string.Empty;
+    public string AgeGroups { get; set; } = string.Empty;
+    public string SessionFormat { get; set; } = string.Empty;
+
+    // Retail
+    public string ProductCategories { get; set; } = string.Empty;
+    public bool HasOnlineStore { get; set; }
+    public string OnlineStoreUrl { get; set; } = string.Empty;
+
+    // Fitness
+    public string ClassTypes { get; set; } = string.Empty;
+    public string ClassSchedule { get; set; } = string.Empty;
+
+    // General
+    public string MainServiceDescription { get; set; } = string.Empty;
+    public string InstagramUrl { get; set; } = string.Empty;
+    public string FacebookUrl { get; set; } = string.Empty;
+
+    // Social proof
+    public List<string> SocialProofScreenshots { get; set; } = new();
+    public string YearsInBusiness { get; set; } = string.Empty;
+    public string ClientsServed { get; set; } = string.Empty;
+    public string SpecialAchievement { get; set; } = string.Empty;
+
     public Dictionary<string, List<string>> PhotosByCategory { get; set; } = new();
     public WebsiteData? WebsiteData { get; set; }
 }

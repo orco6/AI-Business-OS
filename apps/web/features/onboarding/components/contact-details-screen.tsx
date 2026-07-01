@@ -11,13 +11,9 @@ export type ContactDetails = {
   city: string;
   hours: string;
   ownerName: string;
-  deliveryInfo: string;
-  emergencyService: string;
-  bookingMethod: string;
 };
 
 type ContactDetailsScreenProps = {
-  businessType: string;
   onNext: (details: ContactDetails) => void;
   onSkip: () => void;
 };
@@ -69,7 +65,6 @@ function Field({
 }
 
 export function ContactDetailsScreen({
-  businessType,
   onNext,
   onSkip,
 }: ContactDetailsScreenProps) {
@@ -78,9 +73,6 @@ export function ContactDetailsScreen({
   const [location, setLocation] = useState("");
   const [hours, setHours] = useState("");
   const [ownerName, setOwnerName] = useState("");
-  const [deliveryInfo, setDeliveryInfo] = useState("");
-  const [emergencyService, setEmergencyService] = useState("");
-  const [bookingMethod, setBookingMethod] = useState("");
 
   const isValid = phone.trim().length >= 9;
 
@@ -94,9 +86,6 @@ export function ContactDetailsScreen({
       city,
       hours: hours.trim(),
       ownerName: ownerName.trim(),
-      deliveryInfo: deliveryInfo.trim(),
-      emergencyService: emergencyService.trim(),
-      bookingMethod: bookingMethod.trim(),
     };
   }
 
@@ -195,54 +184,6 @@ export function ContactDetailsScreen({
                 className={inputClassName}
               />
             </Field>
-
-            {businessType === "restaurant" ? (
-              <Field
-                id="contact-delivery"
-                label="יש משלוחים? באיזה אפליקציה?"
-              >
-                <input
-                  id="contact-delivery"
-                  type="text"
-                  dir="auto"
-                  value={deliveryInfo}
-                  onChange={(event) => setDeliveryInfo(event.target.value)}
-                  placeholder="Wolt, 10bis, משלוחים עצמאיים..."
-                  className={inputClassName}
-                />
-              </Field>
-            ) : null}
-
-            {businessType === "services" ? (
-              <Field id="contact-emergency" label="יש שירות חירום 24/7?">
-                <input
-                  id="contact-emergency"
-                  type="text"
-                  dir="auto"
-                  value={emergencyService}
-                  onChange={(event) => setEmergencyService(event.target.value)}
-                  placeholder="כן, זמין 24/7 / לא"
-                  className={inputClassName}
-                />
-              </Field>
-            ) : null}
-
-            {businessType === "beauty" ? (
-              <Field
-                id="contact-booking"
-                label="איך קובעים תור? (וואטסאפ / טלפון / אפליקציה)"
-              >
-                <input
-                  id="contact-booking"
-                  type="text"
-                  dir="auto"
-                  value={bookingMethod}
-                  onChange={(event) => setBookingMethod(event.target.value)}
-                  placeholder="וואטסאפ / טלפון / אפליקציה"
-                  className={inputClassName}
-                />
-              </Field>
-            ) : null}
           </div>
 
           <div className="mt-auto flex flex-col gap-3 pt-8">

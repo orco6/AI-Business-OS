@@ -30,6 +30,7 @@ type OnboardingScreenProps = {
 
 export function OnboardingScreen({ onNext }: OnboardingScreenProps = {}) {
   const [businessName, setBusinessName] = useState("");
+  const [touched, setTouched] = useState(false);
 
   const isValid = businessName.trim().length > 0;
 
@@ -87,10 +88,16 @@ export function OnboardingScreen({ onNext }: OnboardingScreenProps = {}) {
                 id="business-name"
                 name="business-name"
                 type="text"
+                inputMode="text"
+                autoCapitalize="words"
+                autoFocus
                 autoComplete="organization"
                 dir={businessName ? "auto" : "rtl"}
                 value={businessName}
-                onChange={(event) => setBusinessName(event.target.value)}
+                onChange={(event) => {
+                  setBusinessName(event.target.value);
+                  setTouched(true);
+                }}
                 placeholder="שם העסק"
                 className={cn(
                   "h-14 w-full rounded-2xl border border-border bg-card px-5 text-start text-lg text-foreground shadow-sm outline-none transition-colors",
@@ -102,8 +109,13 @@ export function OnboardingScreen({ onNext }: OnboardingScreenProps = {}) {
               <Button
                 type="submit"
                 size="lg"
-                disabled={!isValid}
-                className="group mt-1 w-full shadow-sm transition-transform active:scale-[0.99] disabled:opacity-40"
+                onClick={(e) => {
+                  if (!isValid) {
+                    e.preventDefault();
+                    return;
+                  }
+                }}
+                className={`group mt-1 w-full shadow-sm transition-transform active:scale-[0.99] ${!isValid ? "opacity-40" : ""}`}
               >
                 מתחילים
                 <ArrowStartIcon className="size-4 transition-transform duration-200 group-hover:-translate-x-0.5" />

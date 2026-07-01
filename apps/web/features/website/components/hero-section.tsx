@@ -3,18 +3,31 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
-import type { HeroSection as HeroData, ThemeConfig } from "@/features/website/types";
+import type {
+  HeroSection as HeroData,
+  NavbarConfig,
+  ThemeConfig,
+} from "@/features/website/types";
 
 type HeroSectionProps = {
   hero: HeroData;
   businessName: string;
   photosByCategory: Record<string, string[]>;
   theme: ThemeConfig;
+  navbar: NavbarConfig;
   whatsApp?: string;
   phone?: string;
+  menuOpen?: boolean;
+  onMenuOpen: () => void;
 };
 
 const SCROLL_SOLID_THRESHOLD = 60;
+
+const DEFAULT_NAVBAR: NavbarConfig = {
+  links: [{ label: "צור קשר", href: "#contact" }],
+  ctaText: "צור קשר",
+  ctaHref: "#contact",
+};
 
 function getHeroBackground(
   category: string,
@@ -46,20 +59,16 @@ function buildCtaHref(
   return "#contact";
 }
 
-function buildNavContactHref(whatsApp: string, phone: string): string {
-  if (whatsApp) {
-    return `https://wa.me/${whatsApp.replace(/\D/g, "")}`;
-  }
-  return `tel:${phone}`;
-}
-
 export function HeroSection({
   hero,
   businessName,
   photosByCategory,
   theme,
+  navbar = DEFAULT_NAVBAR,
   whatsApp = "",
   phone = "",
+  menuOpen = false,
+  onMenuOpen,
 }: HeroSectionProps) {
   const [scrolled, setScrolled] = useState(false);
 
@@ -89,9 +98,10 @@ export function HeroSection({
     });
   };
 
+  const navTextClass = scrolled ? "text-[var(--color-text)]" : "text-white";
+
   return (
-    <section className="relative h-dvh min-h-0 overflow-hidden sm:min-h-[600px]">
-      {/* Ken Burns - cinematic zoom, CSS only */}
+    <section className="relative h-dvh min-h-0 sm:min-h-[600px]">
       <div className="absolute inset-0 overflow-hidden">
         {hasBackgroundImage ? (
           <Image
@@ -127,31 +137,87 @@ export function HeroSection({
           scrolled ? "bg-white/95 backdrop-blur-sm" : "bg-transparent"
         }`}
       >
-        <span
-          className={`text-xl font-bold leading-[1.2] transition-colors duration-200 sm:text-2xl ${
-            scrolled ? "text-[var(--color-text)]" : "text-white"
-          }`}
+        <button
+          type="button"
+          onClick={onMenuOpen}
+          className={`rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-primary)] ${navTextClass}`}
+          aria-label="פתח תפריט"
+          aria-expanded={menuOpen}
           style={{
-            fontFamily: "var(--font-heading)",
-            textShadow: scrolled
-              ? "none"
-              : "0 2px 10px rgba(0,0,0,0.3)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "0.5rem",
+            minWidth: "44px",
+            minHeight: "44px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            alignItems: "center",
+            justifyContent: "center",
+            touchAction: "manipulation",
+            WebkitTapHighlightColor: "transparent",
+            WebkitAppearance: "none",
           }}
         >
-          {businessName}
-        </span>
-        {(whatsApp || phone) && (
-          <a
-            href={buildNavContactHref(whatsApp, phone)}
-            className={`rounded-full px-5 py-2.5 text-sm font-semibold backdrop-blur-sm transition-colors duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-primary)] ${
-              scrolled
-                ? "border border-black/10 text-[var(--color-text)] hover:bg-black/5"
-                : "border border-white/40 text-white hover:bg-white/20"
-            }`}
+          <span
+            style={{
+              display: "block",
+              width: "24px",
+              height: "2px",
+              backgroundColor: scrolled ? "#111" : "white",
+            }}
+          />
+          <span
+            style={{
+              display: "block",
+              width: "24px",
+              height: "2px",
+              backgroundColor: scrolled ? "#111" : "white",
+            }}
+          />
+          <span
+            style={{
+              display: "block",
+              width: "24px",
+              height: "2px",
+              backgroundColor: scrolled ? "#111" : "white",
+            }}
+          />
+        </button>
+
+        <div className="ms-auto flex items-center gap-4">
+          <span
+            className={`text-xl font-bold leading-[1.2] transition-colors duration-200 sm:text-2xl ${navTextClass}`}
+            style={{
+              fontFamily: "var(--font-heading)",
+              textShadow: scrolled ? "none" : "0 2px 10px rgba(0,0,0,0.3)",
+            }}
           >
-            צור קשר
+            {businessName}
+          </span>
+
+          <a
+            href={navbar.ctaHref}
+            target={navbar.ctaHref.startsWith("http") ? "_blank" : undefined}
+            rel={navbar.ctaHref.startsWith("http") ? "noopener noreferrer" : undefined}
+            className={`hidden rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 sm:inline-block ${
+              scrolled
+                ? "text-white"
+                : "text-[var(--color-text)] bg-white/90 backdrop-blur-sm"
+            }`}
+            style={
+              scrolled
+                ? {
+                    backgroundColor: theme.primaryColor,
+                    boxShadow: `0 4px 16px ${theme.primaryColor}66`,
+                  }
+                : undefined
+            }
+          >
+            {navbar.ctaText}
           </a>
-        )}
+        </div>
       </nav>
 
       <motion.div

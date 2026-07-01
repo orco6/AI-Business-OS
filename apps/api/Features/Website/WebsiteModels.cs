@@ -13,6 +13,11 @@ public class WebsiteData
     public string BusinessSlug { get; set; } = string.Empty;
     public DateTime GeneratedAt { get; set; }
     public Dictionary<string, List<string>> PhotosByCategory { get; set; } = new();
+    public SocialProofSection? SocialProof { get; set; }
+    public NumbersSection? Numbers { get; set; }
+    public MenuSection? Menu { get; set; }
+    public NavbarConfig Navbar { get; set; } = new();
+    public string InstagramUrl { get; set; } = string.Empty;
 }
 
 public class HeroSection
@@ -81,6 +86,68 @@ public class GenerateWebsiteRequest
     public string ProfileId { get; set; } = string.Empty;
 }
 
+public class SocialProofSection
+{
+    public string Title { get; set; } = "מה אומרים עלינו";
+    public List<string> ScreenshotUrls { get; set; } = new();
+    public List<ReviewItem> Reviews { get; set; } = new();
+}
+
+public class ReviewItem
+{
+    public string Text { get; set; } = string.Empty;
+    public string Author { get; set; } = string.Empty;
+    public int Stars { get; set; } = 5;
+}
+
+public class NumbersSection
+{
+    public string Title { get; set; } = "במספרים";
+    public List<StatItem> Stats { get; set; } = new();
+}
+
+public class StatItem
+{
+    public string Value { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
+}
+
+public class MenuSection
+{
+    public string Title { get; set; } = "התפריט שלנו";
+    public string MenuUrl { get; set; } = string.Empty;
+    public List<MenuCategory> Categories { get; set; } = new();
+    public bool HasReservations { get; set; }
+    public string ReservationLink { get; set; } = string.Empty;
+    public string ReservationPhone { get; set; } = string.Empty;
+}
+
+public class MenuCategory
+{
+    public string Name { get; set; } = string.Empty;
+    public List<MenuItem> Items { get; set; } = new();
+}
+
+public class MenuItem
+{
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Price { get; set; } = string.Empty;
+}
+
+public class NavbarConfig
+{
+    public List<NavLink> Links { get; set; } = new();
+    public string CtaText { get; set; } = "צור קשר";
+    public string CtaHref { get; set; } = "#contact";
+}
+
+public class NavLink
+{
+    public string Label { get; set; } = string.Empty;
+    public string Href { get; set; } = string.Empty;
+}
+
 public class AiWebsiteContent
 {
     public HeroSection Hero { get; set; } = new();
@@ -88,4 +155,5 @@ public class AiWebsiteContent
     public List<ServiceItem> Services { get; set; } = new();
     public GallerySection Gallery { get; set; } = new();
     public SeoConfig Seo { get; set; } = new();
+    public List<ReviewItem> SocialProofReviews { get; set; } = new();
 }

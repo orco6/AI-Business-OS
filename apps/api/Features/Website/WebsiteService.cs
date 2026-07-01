@@ -46,10 +46,32 @@ public class WebsiteService
             כותרות: קצרות, אמיצות, מרגשות (מקסימום 6 מילים)
             תת-כותרות: משפט אחד, רגשי, ממוקד בתועלת ללקוח
 
+            חשוב מאוד: אל תמציא שירותים, מנות, מוצרים או מידע שהלקוח לא ציין.
+            שירותים: בסס רק על keyFeatures ו-businessAnswer שהלקוח סיפק.
+            אם אין מידע מספיק, כתוב שירותים כלליים מאוד ולא ספציפיים.
+
             החזר JSON בלבד. ללא text נוסף.
             """;
 
         var photoCategoryKeys = profile.PhotosByCategory.Keys.ToList();
+        var type = profile.BusinessType.ToLowerInvariant();
+        var isFoodBusiness = type.Contains("restaurant") || type.Contains("food") || type.Contains("cafe");
+        var hasMenuSection = profile.WebsiteSections.Contains("menu");
+        var hasSocialProof = profile.SocialProofScreenshots?.Count > 0;
+
+        var extraPrompt = "";
+        if (hasSocialProof)
+        {
+            extraPrompt += """
+
+            אם יש SocialProofScreenshots, הוסף גם:
+            "socialProofReviews": [
+              {"text": "ביקורת קצרה בעברית", "author": "לקוח מרוצה", "stars": 5}
+            ]
+            3 ביקורות מומצאות אבל אמינות בסגנון ביקורות גוגל אמיתיות
+            """;
+        }
+
         var userMessage =
             $$"""
             צור תוכן אתר שיווקי לעסק הבא:
@@ -100,8 +122,9 @@ public class WebsiteService
             }
 
             ctaAction חייב להיות אחד מ: whatsapp, phone, scroll
-            services: 3-6 פריטים רלוונטיים לעסק
+            services: 3-6 פריטים — רק על בסיס מאפיינים מרכזיים ותיאור העסק, בלי להמציא מנות או שירותים ספציפיים
             backgroundImageCategory: בחר מקטגוריות התמונות הזמינות, או ריק אם אין
+            {{extraPrompt}}
             """;
 
         var response = await _anthropicService.CompleteAsync(systemPrompt, userMessage, maxTokens: 4096);
@@ -167,6 +190,61 @@ public class WebsiteService
         {
             websiteData.About.OwnerName = profile.OwnerName;
         }
+
+        var stats = new List<StatItem>();
+        if (!string.IsNullOrWhiteSpace(profile.YearsInBusiness))
+            stats.Add(new StatItem { Value = profile.YearsInBusiness + "+", Label = "שנות ניסיון" });
+        if (!string.IsNullOrWhiteSpace(profile.ClientsServed))
+            stats.Add(new StatItem { Value = profile.ClientsServed + "+", Label = "לקוחות מרוצים" });
+        if (!string.IsNullOrWhiteSpace(profile.SpecialAchievement))
+            stats.Add(new StatItem { Value = "★", Label = profile.SpecialAchievement });
+
+        if (stats.Count > 0)
+            websiteData.Numbers = new NumbersSection { Stats = stats };
+
+        if (profile.SocialProofScreenshots?.Count > 0)
+        {
+            websiteData.SocialProof = new SocialProofSection
+            {
+                Title = "מה אומרים עלינו",
+                ScreenshotUrls = profile.SocialProofScreenshots,
+                Reviews = aiContent.SocialProofReviews,
+            };
+        }
+
+        if (isFoodBusiness && hasMenuSection)
+        {
+            var menuSection = new MenuSection
+            {
+                Title = "התפריט שלנו",
+                MenuUrl = profile.MenuUrl ?? "",
+                HasReservations = profile.HasReservations,
+                ReservationLink = profile.ReservationLink ?? "",
+                ReservationPhone = profile.Phone,
+                Categories = new List<MenuCategory>(),
+            };
+            websiteData.Menu = menuSection;
+        }
+
+        var navLinks = new List<NavLink>();
+        if (profile.WebsiteSections.Contains("menu"))
+            navLinks.Add(new NavLink { Label = "תפריט", Href = "#menu" });
+        if (profile.WebsiteSections.Contains("about"))
+            navLinks.Add(new NavLink { Label = "עלינו", Href = "#about" });
+        if (profile.WebsiteSections.Contains("gallery"))
+            navLinks.Add(new NavLink { Label = "גלריה", Href = "#gallery" });
+        navLinks.Add(new NavLink { Label = "צור קשר", Href = "#contact" });
+
+        websiteData.Navbar = new NavbarConfig
+        {
+            Links = navLinks,
+            CtaText = profile.HasReservations ? "הזמן מקום" : "צור קשר",
+            CtaHref = profile.HasReservations && !string.IsNullOrWhiteSpace(profile.ReservationLink)
+                ? profile.ReservationLink
+                : "#contact",
+        };
+
+        websiteData.InstagramUrl = profile.InstagramUrl ?? "";
 
         var filter = Builders<BusinessProfile>.Filter.Eq(p => p.Id, profileId);
         var update = Builders<BusinessProfile>.Update
