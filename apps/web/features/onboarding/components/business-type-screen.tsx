@@ -29,10 +29,14 @@ const BUSINESS_TYPES: BusinessType[] = [
 ];
 
 type BusinessTypeScreenProps = {
+  errorMessage?: string;
   onNext: (businessType: string) => void;
 };
 
-export function BusinessTypeScreen({ onNext }: BusinessTypeScreenProps) {
+export function BusinessTypeScreen({
+  errorMessage,
+  onNext,
+}: BusinessTypeScreenProps) {
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
@@ -111,6 +115,11 @@ export function BusinessTypeScreen({ onNext }: BusinessTypeScreenProps) {
           >
             המשך
           </Button>
+          {errorMessage ? (
+            <p className="mt-3 text-center text-sm text-destructive">
+              {errorMessage}
+            </p>
+          ) : null}
         </div>
       </div>
     </main>

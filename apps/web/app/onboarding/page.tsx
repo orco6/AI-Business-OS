@@ -27,6 +27,28 @@ import {
 } from "@/features/onboarding/components/social-proof-screen";
 import { WelcomeScreen } from "@/features/onboarding/components/welcome-screen";
 
+const API_BASE =
+  typeof window !== "undefined"
+    ? `http://${window.location.hostname}:5063`
+    : "http://localhost:5063";
+
+const API_TIMEOUT_MS = 90_000;
+
+function apiFetch(path: string, init?: RequestInit): Promise<Response> {
+  return fetch(`${API_BASE}${path}`, {
+    ...init,
+    signal: AbortSignal.timeout(API_TIMEOUT_MS),
+  });
+}
+
+function getFetchErrorMessage(error: unknown): string {
+  if (error instanceof DOMException && error.name === "TimeoutError") {
+    return "הבקשה ארכה יותר מדי. ודא שה-API רץ ונסה שוב.";
+  }
+
+  return "משהו השתבש, נסה שוב";
+}
+
 type OnboardingPlan = {
   needsCategories: boolean;
   categoriesLabel: string;
@@ -118,6 +140,7 @@ export default function OnboardingPage() {
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [profileId, setProfileId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function finalizeOnboarding(
     type: string,
@@ -136,10 +159,9 @@ export default function OnboardingPage() {
     const specific = specificData ?? businessSpecificData;
     const menu = menuData ?? menuUploadData;
     const heroPhoto = heroPhotoParam ?? heroPhotoUrl;
+    setErrorMessage("");
     try {
-      const response = await fetch(
-        "http://localhost:5063/api/onboarding/start",
-        {
+      const response = await apiFetch("/api/onboarding/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -203,8 +225,7 @@ export default function OnboardingPage() {
               stats?.specialAchievement ?? businessStats?.specialAchievement ?? "",
             heroPhotoUrl: heroPhoto,
           }),
-        },
-      );
+      });
 
       if (response.status === 200) {
         const data = (await response.json()) as {
@@ -242,7 +263,7 @@ export default function OnboardingPage() {
               }
             }
 
-            await fetch("http://localhost:5063/api/photos", {
+            await apiFetch("/api/photos", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -254,12 +275,14 @@ export default function OnboardingPage() {
           }
 
           setStep(4);
+        } else {
+          setErrorMessage("משהו השתבש, נסה שוב");
         }
       } else {
-        console.log("error");
+        setErrorMessage("משהו השתבש, נסה שוב");
       }
-    } catch {
-      console.log("error");
+    } catch (error) {
+      setErrorMessage(getFetchErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -268,27 +291,27 @@ export default function OnboardingPage() {
   async function handleBusinessTypeSelected(type: string) {
     setBusinessType(type);
     setIsLoading(true);
+    setErrorMessage("");
     try {
-      const response = await fetch(
-        "http://localhost:5063/api/onboarding/deep-question",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ businessType: type }),
-        },
-      );
+      const response = await apiFetch("/api/onboarding/deep-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessType: type }),
+      });
 
       if (response.status === 200) {
         const data = (await response.json()) as { question?: string };
         if (data.question) {
           setDeepQuestion(data.question);
           setStep(2.5);
+        } else {
+          setErrorMessage("משהו השתבש, נסה שוב");
         }
       } else {
-        console.log("error");
+        setErrorMessage("משהו השתבש, נסה שוב");
       }
-    } catch {
-      console.log("error");
+    } catch (error) {
+      setErrorMessage(getFetchErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -297,19 +320,17 @@ export default function OnboardingPage() {
   async function handleDeepQuestionNext(answer: string) {
     setBusinessAnswer(answer);
     setIsLoading(true);
+    setErrorMessage("");
     try {
-      const response = await fetch(
-        "http://localhost:5063/api/onboarding/plan",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            businessName,
-            businessType,
-            businessAnswer: answer,
-          }),
-        },
-      );
+      const response = await apiFetch("/api/onboarding/plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName,
+          businessType,
+          businessAnswer: answer,
+        }),
+      });
 
       if (response.status === 200) {
         const plan = (await response.json()) as OnboardingPlan;
@@ -320,10 +341,10 @@ export default function OnboardingPage() {
           setStep(3.5);
         }
       } else {
-        console.log("error");
+        setErrorMessage("משהו השתבש, נסה שוב");
       }
-    } catch {
-      console.log("error");
+    } catch (error) {
+      setErrorMessage(getFetchErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -344,6 +365,7 @@ export default function OnboardingPage() {
       <div className="relative">
         <SocialProofScreen
           profileId={profileId}
+          errorMessage={errorMessage}
           onNext={(screenshots, stats) => {
             setSocialProofScreenshots(screenshots);
             setBusinessStats(stats);
@@ -380,20 +402,17 @@ export default function OnboardingPage() {
 
   if (step === 3.7) {
     return (
-      <div className="relative">
-        <ContactDetailsScreen
-          onNext={(details) => {
-            setContactDetails(details);
-            setStep(3.8);
-          }}
-          onSkip={() => setStep(3.8)}
-        />
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/80">
-            <p className="text-base font-medium text-muted-foreground">רגע...</p>
-          </div>
-        )}
-      </div>
+      <ContactDetailsScreen
+        onNext={(details) => {
+          setContactDetails(details);
+          setIsLoading(false);
+          setStep(3.8);
+        }}
+        onSkip={() => {
+          setIsLoading(false);
+          setStep(3.8);
+        }}
+      />
     );
   }
 
@@ -517,6 +536,7 @@ export default function OnboardingPage() {
       <div className="relative">
         <DeepQuestionScreen
           question={deepQuestion}
+          errorMessage={errorMessage}
           onNext={handleDeepQuestionNext}
           onSkip={() => setStep(3.5)}
         />
@@ -532,7 +552,10 @@ export default function OnboardingPage() {
   if (step === 2) {
     return (
       <div className="relative">
-        <BusinessTypeScreen onNext={handleBusinessTypeSelected} />
+        <BusinessTypeScreen
+          errorMessage={errorMessage}
+          onNext={handleBusinessTypeSelected}
+        />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80">
             <p className="text-base font-medium text-muted-foreground">רגע...</p>

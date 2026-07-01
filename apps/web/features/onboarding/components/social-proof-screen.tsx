@@ -21,6 +21,7 @@ export type BusinessStats = {
 
 type SocialProofScreenProps = {
   profileId: string;
+  errorMessage?: string;
   onNext: (screenshots: string[], stats: BusinessStats) => void;
   onSkip: () => void;
 };
@@ -42,6 +43,7 @@ function readFileAsDataUrl(file: File): Promise<string> {
 
 export function SocialProofScreen({
   profileId,
+  errorMessage,
   onNext,
   onSkip,
 }: SocialProofScreenProps) {
@@ -294,6 +296,12 @@ export function SocialProofScreen({
             >
               {isUploading ? "מעלה תמונות..." : "המשך"}
             </Button>
+
+            {errorMessage ? (
+              <p className="text-center text-sm text-destructive">
+                {errorMessage}
+              </p>
+            ) : null}
 
             <button
               type="button"

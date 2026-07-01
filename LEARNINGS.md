@@ -103,3 +103,11 @@ _User research, usability findings, copy that works._
 **Discovery:** (1) Stored `navbar.links` can be empty or use PascalCase `Label`/`Href` so `link.label` renders blank; (2) nested Framer Motion `opacity: 0` on links inside a transforming parent stays stuck on Safari iOS while the solid CTA button still appears.  
 **Action:** `resolveNavbar()` builds links from website sections when API data is missing; normalize PascalCase; render nav links as plain `<a>` with full opacity (no motion fade).  
 **Tags:** `ux`, `other`
+
+### 2026-07-02 — Onboarding stuck on "רגע..." from CORS port mismatch
+
+**Context:** User stuck on onboarding after clicking Continue (business type or contact details flow).  
+**Discovery:** (1) CORS allowed only `localhost:3000` and `192.168.x.x:3000` — Next.js often runs on `:3001`/`:3002`; network URL uses `10.x.x.x`. (2) API bound to `localhost:5063` only, so `API_BASE` hostname routing from LAN could not reach the server. (3) Related: `UseHttpsRedirection()` before CORS breaks preflight in dev — already skipped in Development.  
+**Action:** CORS now allows any port on `localhost`, `127.0.0.1`, `10.*`, and `192.168.*`. API listens on `0.0.0.0:5063`. Onboarding API calls use `AbortSignal.timeout(90s)` with visible Hebrew error on failure.  
+**Tags:** `ux`, `architecture`
+

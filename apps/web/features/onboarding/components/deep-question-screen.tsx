@@ -6,12 +6,14 @@ import { type FormEvent, useState } from "react";
 
 type DeepQuestionScreenProps = {
   question: string;
+  errorMessage?: string;
   onNext: (answer: string) => void;
   onSkip: () => void;
 };
 
 export function DeepQuestionScreen({
   question,
+  errorMessage,
   onNext,
   onSkip,
 }: DeepQuestionScreenProps) {
@@ -89,6 +91,12 @@ export function DeepQuestionScreen({
               >
                 המשך
               </Button>
+
+              {errorMessage ? (
+                <p className="text-center text-sm text-destructive">
+                  {errorMessage}
+                </p>
+              ) : null}
 
               <button
                 type="button"

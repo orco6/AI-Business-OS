@@ -15,11 +15,29 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.SetIsOriginAllowed(IsLocalDevOrigin)
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
 });
+
+static bool IsLocalDevOrigin(string origin)
+{
+    if (string.IsNullOrWhiteSpace(origin))
+    {
+        return false;
+    }
+
+    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri) || uri.Scheme != "http")
+    {
+        return false;
+    }
+
+    var host = uri.Host;
+    return host is "localhost" or "127.0.0.1"
+        || host.StartsWith("192.168.")
+        || host.StartsWith("10.");
+}
 
 var mongoConnectionString = builder.Configuration["MongoDB:ConnectionString"]!;
 var mongoDatabaseName = builder.Configuration["MongoDB:DatabaseName"]!;
@@ -47,7 +65,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors();
 
