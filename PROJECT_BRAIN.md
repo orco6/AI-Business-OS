@@ -64,7 +64,7 @@
 - RTL עברית מלא
 - Google Auth (NextAuth.js) מלא
 - `/login` - דף התחברות עם Google
-- `/dashboard` - דשבורד מציג שם משתמש + נתוני עסק אמיתיים מ-MongoDB
+- `/dashboard` - דשבורד מציג שם משתמש + נתוני עסק אמיתיים מ-MongoDB + כפתור "בנה את האתר שלי" → generate + preview
 - `/onboarding` - אונבורדינג מלא 7 שלבים:
   - שלב 1: שם עסק
   - שלב 2: סוג עסק (6 קטגוריות עם Lucide icons)
@@ -294,14 +294,14 @@ Welcome + Claude message
 - ✅ Gallery: CSS masonry desktop + scroll-snap mobile + CSS lightbox
 - ✅ Services: grid desktop + scroll-snap mobile
 - ✅ Sticky WhatsApp button
+- ✅ Mobile spacing fix: section padding `py-16 sm:py-32 lg:py-40`, header gaps responsive (was `py-32`/`mb-20` causing empty screens on 375px)
 
 ### Test profiles:
 - חליליאן (ללא תמונות): `6a4186de072d43b88654b003`
 - מסעדת אור (עם תמונות): `6a4206bdb97e47e61e91538e`
 
 ### מה נשאר:
-- שיפור ויזואלי - האתר עוד לא ברמה מרהיבה
-- Dashboard: כפתור "בנה את האתר שלי"
+- שיפור ויזואלי - האתר עוד לא ברמה מרהיבה — **בסיס ידע:** `website_ai_knowledge/` (כללי execution quality לרכיבים קיימים)
 - Loading screen
 - Section תפריט למסעדות
 

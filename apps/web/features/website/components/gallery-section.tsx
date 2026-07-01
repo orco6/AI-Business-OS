@@ -1,31 +1,56 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "motion/react";
+import { useRef } from "react";
+import { motion, useInView } from "motion/react";
+
 import type { GallerySection as GalleryData } from "@/features/website/types";
 
 type GallerySectionProps = {
   gallery: GalleryData;
 };
 
+const SECTION_LABEL = "הגלריה שלנו";
+
+const galleryImageLinkClassName =
+  "group block overflow-hidden rounded-2xl transition-all duration-500 ease-out";
+
 export function GallerySection({ gallery }: GallerySectionProps) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0 });
+
   const photos = gallery.photoUrls.slice(0, 9);
   if (photos.length === 0) return null;
 
+  const galleryTitle = gallery.title || "גלריה";
+  const [featuredPhoto, ...restPhotos] = photos;
+
   return (
-    <section className="py-20" aria-labelledby="gallery-heading">
+    <section
+      ref={ref}
+      className="bg-[var(--color-bg)] py-16 sm:py-32 lg:py-40"
+      aria-labelledby="gallery-heading"
+    >
       <div className="mx-auto max-w-5xl px-6">
-        <motion.h2
-          id="gallery-heading"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-10 text-center text-3xl font-bold sm:text-4xl"
-          style={{ fontFamily: "var(--font-heading)" }}
+        <motion.div
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+          transition={{ duration: 0.8 }}
+          className="mb-10 flex flex-col items-center gap-5 text-center sm:mb-16 lg:mb-20"
         >
-          {gallery.title || "גלריה"}
-        </motion.h2>
+          <span
+            className="text-sm font-semibold leading-[1.3] tracking-wide text-[var(--color-primary)]"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            {SECTION_LABEL}
+          </span>
+          <h2
+            id="gallery-heading"
+            className="text-5xl font-black leading-[1.15] tracking-[-0.03em] sm:text-6xl lg:text-7xl"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            {galleryTitle}
+          </h2>
+        </motion.div>
       </div>
 
       {/* Mobile: horizontal scroll snap */}
@@ -37,16 +62,14 @@ export function GallerySection({ gallery }: GallerySectionProps) {
           <motion.a
             key={`mob-${index}`}
             href={`#lightbox-${index}`}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: index * 0.04 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.7, delay: index * 0.04 }}
             className="relative shrink-0 overflow-hidden rounded-2xl"
             style={{ scrollSnapAlign: "start", width: "75vw", aspectRatio: "4/5" }}
           >
             <Image
               src={url}
-              alt={`${gallery.title} ${index + 1}`}
+              alt={`${galleryTitle} ${index + 1}`}
               fill
               className="object-cover"
               sizes="75vw"
@@ -56,29 +79,51 @@ export function GallerySection({ gallery }: GallerySectionProps) {
         ))}
       </div>
 
-      {/* Desktop: CSS masonry columns */}
-      <div className="mx-auto hidden max-w-5xl columns-3 gap-4 px-6 sm:block">
-        {photos.map((url, index) => (
-          <motion.a
-            key={`desk-${index}`}
-            href={`#lightbox-${index}`}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
-            className="group mb-4 block break-inside-avoid overflow-hidden rounded-2xl"
-          >
-            <Image
-              src={url}
-              alt={`${gallery.title} ${index + 1}`}
-              width={400}
-              height={index % 3 === 0 ? 520 : 300}
-              className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-              loading="lazy"
-              sizes="33vw"
-            />
-          </motion.a>
-        ))}
+      {/* Desktop: featured first + masonry grid — full bleed */}
+      <div className="hidden w-full sm:block">
+        <motion.a
+          key="desk-featured"
+          href="#lightbox-0"
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 0 }}
+          className={`${galleryImageLinkClassName} relative mb-4 aspect-[16/9] w-full`}
+        >
+          <Image
+            src={featuredPhoto}
+            alt={`${galleryTitle} 1`}
+            fill
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            loading="lazy"
+            sizes="100vw"
+          />
+        </motion.a>
+
+        {restPhotos.length > 0 && (
+          <div className="columns-3 gap-4">
+            {restPhotos.map((url, index) => {
+              const photoIndex = index + 1;
+              return (
+                <motion.a
+                  key={`desk-${photoIndex}`}
+                  href={`#lightbox-${photoIndex}`}
+                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                  transition={{ duration: 0.8, delay: photoIndex * 0.05 }}
+                  className={`${galleryImageLinkClassName} mb-4 break-inside-avoid`}
+                >
+                  <Image
+                    src={url}
+                    alt={`${galleryTitle} ${photoIndex + 1}`}
+                    width={400}
+                    height={photoIndex % 3 === 0 ? 520 : 300}
+                    className="h-auto w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                    loading="lazy"
+                    sizes="33vw"
+                  />
+                </motion.a>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Native CSS lightbox - zero JS */}
@@ -92,11 +137,11 @@ export function GallerySection({ gallery }: GallerySectionProps) {
           aria-label={`תמונה ${index + 1}`}
         >
           <a href="#" className="absolute inset-0" aria-label="סגור גלריה" />
-          <div className="relative z-10 flex max-h-[90vh] max-w-[90vw] items-center gap-4">
+          <div className="relative z-10 flex max-h-[90dvh] max-w-[90vw] items-center gap-4">
             {index > 0 && (
               <a
                 href={`#lightbox-${index - 1}`}
-                className="absolute -right-12 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm hover:bg-white/40"
+                className="absolute -start-12 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-colors duration-500 ease-out hover:bg-white/40"
                 aria-label="תמונה קודמת"
               >
                 ‹
@@ -104,15 +149,15 @@ export function GallerySection({ gallery }: GallerySectionProps) {
             )}
             <Image
               src={url}
-              alt={`${gallery.title} ${index + 1}`}
+              alt={`${galleryTitle} ${index + 1}`}
               width={1200}
               height={900}
-              className="max-h-[85vh] w-auto max-w-[80vw] rounded-xl object-contain shadow-2xl"
+              className="max-h-[85dvh] w-auto max-w-[80vw] rounded-xl object-contain shadow-2xl"
             />
             {index < photos.length - 1 && (
               <a
                 href={`#lightbox-${index + 1}`}
-                className="absolute -left-12 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm hover:bg-white/40"
+                className="absolute -end-12 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-colors duration-500 ease-out hover:bg-white/40"
                 aria-label="תמונה הבאה"
               >
                 ›
@@ -121,7 +166,7 @@ export function GallerySection({ gallery }: GallerySectionProps) {
           </div>
           <a
             href="#"
-            className="absolute end-4 top-4 z-20 rounded-full bg-white/20 p-2 text-xl text-white backdrop-blur-sm hover:bg-white/40"
+            className="absolute end-4 top-4 z-20 rounded-full bg-white/20 p-2 text-xl text-white backdrop-blur-sm transition-colors duration-500 ease-out hover:bg-white/40"
             aria-label="סגור"
           >
             ✕

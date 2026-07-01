@@ -11,7 +11,24 @@ export default function DashboardPage() {
   const [businessProfile, setBusinessProfile] = useState<{
     businessName: string;
     businessType: string;
+    profileId: string;
   } | null>(null);
+  const [isBuilding, setIsBuilding] = useState(false);
+
+  const buildWebsite = async () => {
+    if (!businessProfile?.profileId) return;
+    setIsBuilding(true);
+    try {
+      await fetch("http://localhost:5063/api/website/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileId: businessProfile.profileId }),
+      });
+      router.push(`/preview/${businessProfile.profileId}`);
+    } catch {
+      setIsBuilding(false);
+    }
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -31,6 +48,7 @@ export default function DashboardPage() {
           setBusinessProfile({
             businessName: data.businessName,
             businessType: data.businessType,
+            profileId: data.id,
           });
         }
       })
@@ -74,6 +92,14 @@ export default function DashboardPage() {
               <p className="text-sm text-muted-foreground">
                 {businessProfile.businessType}
               </p>
+              <button
+                onClick={buildWebsite}
+                disabled={isBuilding}
+                className="mt-4 w-full rounded-2xl py-4 text-base font-bold text-white transition-all hover:opacity-90 disabled:opacity-60"
+                style={{ backgroundColor: "var(--primary)" }}
+              >
+                {isBuilding ? "בונה את האתר שלך..." : "בנה את האתר שלי ✨"}
+              </button>
             </div>
           ) : (
             <p className="text-base text-muted-foreground">

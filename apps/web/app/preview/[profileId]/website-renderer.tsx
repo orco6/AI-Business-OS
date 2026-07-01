@@ -3,9 +3,6 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import "@fontsource-variable/heebo";
-import "@fontsource-variable/frank-ruhl-libre";
-import "@fontsource-variable/rubik";
-import "@fontsource/secular-one";
 import type { WebsiteData } from "@/features/website/types";
 import { HeroSection } from "@/features/website/components/hero-section";
 import { AboutSection } from "@/features/website/components/about-section";
@@ -14,14 +11,7 @@ import { GallerySection } from "@/features/website/components/gallery-section";
 import { ContactSection } from "@/features/website/components/contact-section";
 import { StickyWhatsApp } from "@/features/website/components/sticky-whatsapp";
 
-const HEADING_FONTS: Record<string, string> = {
-  "frank-ruhl": "'Frank Ruhl Libre Variable', serif",
-  secular: "'Secular One', sans-serif",
-  rubik: "'Rubik Variable', sans-serif",
-  heebo: "'Heebo Variable', sans-serif",
-};
-
-const BODY_FONT = "'Heebo Variable', sans-serif";
+const HEEBO = "'Heebo Variable', sans-serif";
 
 type WebsiteRendererProps = {
   websiteData: WebsiteData;
@@ -29,8 +19,6 @@ type WebsiteRendererProps = {
 
 export function WebsiteRenderer({ websiteData }: WebsiteRendererProps) {
   const { theme } = websiteData;
-  const headingFont =
-    HEADING_FONTS[theme.fontHeading] ?? HEADING_FONTS.heebo;
 
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.08 });
@@ -53,7 +41,7 @@ export function WebsiteRenderer({ websiteData }: WebsiteRendererProps) {
     <div
       dir="rtl"
       lang="he"
-      className="min-h-screen antialiased"
+      className="min-h-dvh antialiased"
       style={
         {
           "--color-primary": theme.primaryColor,
@@ -61,8 +49,8 @@ export function WebsiteRenderer({ websiteData }: WebsiteRendererProps) {
           "--color-accent": theme.accentColor,
           "--color-text": theme.textColor,
           "--color-bg": theme.bgColor,
-          "--font-heading": headingFont,
-          "--font-body": BODY_FONT,
+          "--font-heading": HEEBO,
+          "--font-body": HEEBO,
           backgroundColor: "var(--color-bg)",
           color: "var(--color-text)",
           fontFamily: "var(--font-body)",

@@ -11,7 +11,7 @@ export function StickyWhatsApp({ whatsApp }: StickyWhatsAppProps) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="שלח הודעה ב-WhatsApp"
-      className="whatsapp-pulse relative fixed bottom-6 end-6 z-50 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+      className="whatsapp-pulse relative fixed bottom-6 end-6 z-50 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-500 ease-out hover:scale-105 active:scale-95"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
