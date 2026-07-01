@@ -4,21 +4,36 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { type FormEvent, type ReactNode, useState } from "react";
 
+export type MenuDisplayMode =
+  | "העלה תמונות"
+  | "הזן מנות ידנית"
+  | "יש לי קישור"
+  | "אין כרגע";
+
 export type BusinessSpecificData = {
   menuUrl?: string;
+  menuDisplayMode?: MenuDisplayMode;
+  menuTypes?: string;
+  restaurantHighlights?: string;
+  extraServices?: string;
   hasReservations?: boolean;
   reservationLink?: string;
   cuisineType?: string;
   pricingList?: string;
   bookingMethod?: string;
+  bookingLink?: string;
   teamSize?: string;
   serviceArea?: string;
   emergency24_7?: boolean;
+  emergencyHours?: string;
+  isLicensed?: boolean;
   licenseNumber?: string;
   specialization?: string;
   subjects?: string;
   ageGroups?: string;
   sessionFormat?: string;
+  studentAchievements?: string;
+  offersFreeTrial?: boolean;
   productCategories?: string;
   hasOnlineStore?: boolean;
   onlineStoreUrl?: string;
@@ -41,19 +56,37 @@ const inputClassName = cn(
   "focus:border-primary focus:ring-2 focus:ring-ring/25",
 );
 
-const textareaClassName = cn(
-  inputClassName,
-  "min-h-[100px] resize-none py-3",
-);
+const textareaClassName = cn(inputClassName, "min-h-[100px] resize-none py-3");
+
+const MENU_DISPLAY_OPTIONS: MenuDisplayMode[] = [
+  "העלה תמונות",
+  "הזן מנות ידנית",
+  "יש לי קישור",
+  "אין כרגע",
+];
+
+const MENU_TYPE_OPTIONS = ["ערב", "בראנץ'", "אלכוהול", "עונתי", "ילדים"];
+
+const RESTAURANT_HIGHLIGHT_OPTIONS = [
+  "כשר",
+  "טבעוני",
+  "גלאט",
+  "ללא גלוטן",
+  "בשרי בלבד",
+];
+
+const EXTRA_SERVICE_OPTIONS = ["חדר פרטי", "ארוחות עסקיות", "קייטרינג"];
 
 function Field({
   id,
   label,
+  hint,
   required,
   children,
 }: {
   id: string;
   label: string;
+  hint?: string;
   required?: boolean;
   children: ReactNode;
 }) {
@@ -68,6 +101,9 @@ function Field({
           </span>
         ) : null}
       </label>
+      {hint ? (
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      ) : null}
       {children}
     </div>
   );
@@ -115,12 +151,14 @@ function Toggle({
 function RadioGroup({
   name,
   label,
+  hint,
   options,
   value,
   onChange,
 }: {
   name: string;
   label: string;
+  hint?: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
@@ -130,6 +168,9 @@ function RadioGroup({
       <legend className="mb-1 text-sm font-medium text-foreground">
         {label}
       </legend>
+      {hint ? (
+        <p className="mb-1 text-xs text-muted-foreground">{hint}</p>
+      ) : null}
       <div className="flex flex-col gap-2">
         {options.map((option) => (
           <label
@@ -157,24 +198,96 @@ function RadioGroup({
   );
 }
 
+function CheckboxGroup({
+  label,
+  hint,
+  options,
+  selected,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  options: string[];
+  selected: string[];
+  onChange: (selected: string[]) => void;
+}) {
+  function toggle(option: string) {
+    if (selected.includes(option)) {
+      onChange(selected.filter((item) => item !== option));
+    } else {
+      onChange([...selected, option]);
+    }
+  }
+
+  return (
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-1 text-sm font-medium text-foreground">
+        {label}
+      </legend>
+      {hint ? (
+        <p className="mb-1 text-xs text-muted-foreground">{hint}</p>
+      ) : null}
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => {
+          const isSelected = selected.includes(option);
+          return (
+            <button
+              key={option}
+              type="button"
+              aria-pressed={isSelected}
+              onClick={() => toggle(option)}
+              className={cn(
+                "rounded-full border px-4 py-2 text-sm transition-colors",
+                isSelected
+                  ? "border-primary bg-primary/10 text-foreground"
+                  : "border-border bg-card text-muted-foreground",
+              )}
+            >
+              {option}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+function joinSelections(values: string[]): string | undefined {
+  return values.length > 0 ? values.join(", ") : undefined;
+}
+
 export function BusinessSpecificScreen({
   businessType,
   onNext,
   onSkip,
 }: BusinessSpecificScreenProps) {
   const [menuUrl, setMenuUrl] = useState("");
+  const [menuDisplayMode, setMenuDisplayMode] = useState<MenuDisplayMode | "">(
+    "",
+  );
+  const [menuTypes, setMenuTypes] = useState<string[]>([]);
+  const [restaurantHighlights, setRestaurantHighlights] = useState<string[]>(
+    [],
+  );
+  const [extraServices, setExtraServices] = useState<string[]>([]);
   const [reservationMethod, setReservationMethod] = useState("");
   const [reservationLink, setReservationLink] = useState("");
   const [cuisineType, setCuisineType] = useState("");
   const [pricingList, setPricingList] = useState("");
+  const [bookingMethod, setBookingMethod] = useState("");
+  const [bookingLink, setBookingLink] = useState("");
   const [teamSize, setTeamSize] = useState("");
   const [serviceArea, setServiceArea] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [emergency24_7, setEmergency24_7] = useState(false);
+  const [emergencyHours, setEmergencyHours] = useState("");
+  const [isLicensed, setIsLicensed] = useState(false);
   const [licenseNumber, setLicenseNumber] = useState("");
   const [subjects, setSubjects] = useState("");
   const [ageGroups, setAgeGroups] = useState("");
   const [sessionFormat, setSessionFormat] = useState("");
+  const [studentAchievements, setStudentAchievements] = useState("");
+  const [offersFreeTrial, setOffersFreeTrial] = useState(false);
   const [productCategories, setProductCategories] = useState("");
   const [hasOnlineStore, setHasOnlineStore] = useState(false);
   const [onlineStoreUrl, setOnlineStoreUrl] = useState("");
@@ -195,7 +308,15 @@ export function BusinessSpecificScreen({
       case "restaurant":
         return {
           ...base,
-          menuUrl: menuUrl.trim() || undefined,
+          cuisineType: cuisineType.trim() || undefined,
+          menuTypes: joinSelections(menuTypes),
+          menuDisplayMode: menuDisplayMode || undefined,
+          menuUrl:
+            menuDisplayMode === "יש לי קישור"
+              ? menuUrl.trim() || undefined
+              : undefined,
+          restaurantHighlights: joinSelections(restaurantHighlights),
+          extraServices: joinSelections(extraServices),
           hasReservations: reservationMethod
             ? reservationMethod !== "אין הזמנות מראש"
             : undefined,
@@ -204,12 +325,16 @@ export function BusinessSpecificScreen({
             reservationMethod === "אתר הזמנות"
               ? reservationLink.trim() || undefined
               : undefined,
-          cuisineType: cuisineType.trim() || undefined,
         };
       case "beauty":
         return {
           ...base,
           pricingList: pricingList.trim() || undefined,
+          bookingMethod: bookingMethod || undefined,
+          bookingLink:
+            bookingMethod === "אפליקציה"
+              ? bookingLink.trim() || undefined
+              : undefined,
           teamSize: teamSize.trim() || undefined,
         };
       case "services":
@@ -217,7 +342,14 @@ export function BusinessSpecificScreen({
           ...base,
           serviceArea: serviceArea.trim() || undefined,
           emergency24_7,
+          emergencyHours: emergency24_7
+            ? emergencyHours.trim() || undefined
+            : undefined,
           specialization: specialization.trim() || undefined,
+          isLicensed,
+          licenseNumber: isLicensed
+            ? licenseNumber.trim() || undefined
+            : undefined,
         };
       case "education":
         return {
@@ -225,6 +357,8 @@ export function BusinessSpecificScreen({
           subjects: subjects.trim() || undefined,
           ageGroups: ageGroups.trim() || undefined,
           sessionFormat: sessionFormat || undefined,
+          studentAchievements: studentAchievements.trim() || undefined,
+          offersFreeTrial,
         };
       case "retail":
         return {
@@ -241,12 +375,19 @@ export function BusinessSpecificScreen({
           classTypes: classTypes.trim() || undefined,
           classSchedule: classSchedule.trim() || undefined,
           pricingList: fitnessPricing.trim() || undefined,
+          sessionFormat: sessionFormat || undefined,
+          studentAchievements: studentAchievements.trim() || undefined,
+          offersFreeTrial,
         };
       default:
         return {
           ...base,
           mainServiceDescription: mainServiceDescription.trim() || undefined,
           serviceArea: serviceArea.trim() || undefined,
+          isLicensed,
+          licenseNumber: isLicensed
+            ? licenseNumber.trim() || undefined
+            : undefined,
         };
     }
   }
@@ -254,7 +395,11 @@ export function BusinessSpecificScreen({
   function isValid(): boolean {
     switch (businessType) {
       case "restaurant":
-        return menuUrl.trim().length > 0;
+        return (
+          cuisineType.trim().length > 0 ||
+          menuDisplayMode !== "" ||
+          menuTypes.length > 0
+        );
       case "beauty":
         return pricingList.trim().length > 0;
       case "services":
@@ -281,17 +426,62 @@ export function BusinessSpecificScreen({
       case "restaurant":
         return (
           <>
-            <Field id="menu-url" label="יש לך תפריט? הכנס קישור או נעלה PDF" required>
+            <Field
+              id="cuisine-type"
+              label="מה סוג המטבח שלך?"
+              required
+            >
               <input
-                id="menu-url"
-                type="url"
-                dir="ltr"
-                value={menuUrl}
-                onChange={(event) => setMenuUrl(event.target.value)}
-                placeholder="https://..."
+                id="cuisine-type"
+                type="text"
+                dir="auto"
+                value={cuisineType}
+                onChange={(event) => setCuisineType(event.target.value)}
+                placeholder="ים תיכוני, אסייתי, בשרי, איטלקי, וגאן, יפני..."
                 className={inputClassName}
               />
             </Field>
+            <CheckboxGroup
+              label="יש לך כמה סוגי תפריטים?"
+              hint="בחר את כל מה שרלוונטי"
+              options={MENU_TYPE_OPTIONS}
+              selected={menuTypes}
+              onChange={setMenuTypes}
+            />
+            <RadioGroup
+              name="menu-display-mode"
+              label="איך תרצה להציג את התפריט?"
+              options={MENU_DISPLAY_OPTIONS}
+              value={menuDisplayMode}
+              onChange={(value) =>
+                setMenuDisplayMode(value as MenuDisplayMode)
+              }
+            />
+            {menuDisplayMode === "יש לי קישור" ? (
+              <Field id="menu-url" label="קישור לתפריט">
+                <input
+                  id="menu-url"
+                  type="url"
+                  dir="ltr"
+                  value={menuUrl}
+                  onChange={(event) => setMenuUrl(event.target.value)}
+                  placeholder="https://..."
+                  className={inputClassName}
+                />
+              </Field>
+            ) : null}
+            <CheckboxGroup
+              label="מה הדגשים של המסעדה?"
+              options={RESTAURANT_HIGHLIGHT_OPTIONS}
+              selected={restaurantHighlights}
+              onChange={setRestaurantHighlights}
+            />
+            <CheckboxGroup
+              label="יש לכם גם..."
+              options={EXTRA_SERVICE_OPTIONS}
+              selected={extraServices}
+              onChange={setExtraServices}
+            />
             <RadioGroup
               name="reservation-method"
               label="איך מזמינים מקום?"
@@ -317,35 +507,47 @@ export function BusinessSpecificScreen({
                 />
               </Field>
             ) : null}
-            <Field id="cuisine-type" label="סוג המטבח">
-              <input
-                id="cuisine-type"
-                type="text"
-                dir="auto"
-                value={cuisineType}
-                onChange={(event) => setCuisineType(event.target.value)}
-                placeholder="בשרי, ים תיכוני, איטלקי..."
-                className={inputClassName}
-              />
-            </Field>
           </>
         );
 
       case "beauty":
         return (
           <>
-            <Field id="pricing-list" label="מחירון שירותים" required>
+            <Field id="pricing-list" label="מה המחירון שלך?" required>
               <textarea
                 id="pricing-list"
                 dir="auto"
                 value={pricingList}
                 onChange={(event) => setPricingList(event.target.value)}
-                placeholder="תספורת גבר 80₪, תספורת אישה 120₪..."
+                placeholder="תספורת גבר 80₪, תספורת אישה מ-120₪, צביעה מ-250₪..."
                 rows={4}
                 className={textareaClassName}
               />
             </Field>
-            <Field id="team-size" label="כמה אנשים בצוות?">
+            <RadioGroup
+              name="booking-method"
+              label="איך קובעים תור?"
+              options={["וואטסאפ", "טלפון", "אפליקציה"]}
+              value={bookingMethod}
+              onChange={setBookingMethod}
+            />
+            {bookingMethod === "אפליקציה" ? (
+              <Field id="booking-link" label="קישור לאפליקציית הזמנות">
+                <input
+                  id="booking-link"
+                  type="url"
+                  dir="ltr"
+                  value={bookingLink}
+                  onChange={(event) => setBookingLink(event.target.value)}
+                  placeholder="https://..."
+                  className={inputClassName}
+                />
+              </Field>
+            ) : null}
+            <Field
+              id="team-size"
+              label="כמה סטייליסטים / טכנאיות בצוות?"
+            >
               <input
                 id="team-size"
                 type="text"
@@ -369,41 +571,73 @@ export function BusinessSpecificScreen({
                 dir="auto"
                 value={serviceArea}
                 onChange={(event) => setServiceArea(event.target.value)}
-                placeholder="תל אביב והסביבה, גוש דן..."
+                placeholder="תל אביב והסביבה, חיפה, גוש דן..."
                 className={inputClassName}
               />
             </Field>
             <Toggle
               id="emergency-24-7"
-              label="יש שירות חירום 24/7?"
+              label="יש שירות חירום?"
               checked={emergency24_7}
               onChange={setEmergency24_7}
             />
-            <Field id="specialization" label="מה ההתמחות שלך?">
+            {emergency24_7 ? (
+              <Field id="emergency-hours" label="באיזה שעות?">
+                <input
+                  id="emergency-hours"
+                  type="text"
+                  dir="auto"
+                  value={emergencyHours}
+                  onChange={(event) => setEmergencyHours(event.target.value)}
+                  placeholder="24/7, לילות בלבד, סופי שבוע..."
+                  className={inputClassName}
+                />
+              </Field>
+            ) : null}
+            <Field id="specialization" label="מה ההתמחות הראשית שלך?">
               <input
                 id="specialization"
                 type="text"
                 dir="auto"
                 value={specialization}
                 onChange={(event) => setSpecialization(event.target.value)}
-                placeholder="אינסטלציה, חשמל, גבס..."
+                placeholder="אינסטלציה, חשמל, שיפוצים, ניקיון..."
                 className={inputClassName}
               />
             </Field>
+            <Toggle
+              id="is-licensed"
+              label="האם אתה מורשה / מוסמך?"
+              checked={isLicensed}
+              onChange={setIsLicensed}
+            />
+            {isLicensed ? (
+              <Field id="license-number" label="מספר רישיון / הסמכה">
+                <input
+                  id="license-number"
+                  type="text"
+                  dir="auto"
+                  value={licenseNumber}
+                  onChange={(event) => setLicenseNumber(event.target.value)}
+                  placeholder="מספר רישיון או תיאור ההסמכה"
+                  className={inputClassName}
+                />
+              </Field>
+            ) : null}
           </>
         );
 
       case "education":
         return (
           <>
-            <Field id="subjects" label="אילו מקצועות / תחומים?" required>
+            <Field id="subjects" label="אילו מקצועות / תחומים אתה מלמד?" required>
               <input
                 id="subjects"
                 type="text"
                 dir="auto"
                 value={subjects}
                 onChange={(event) => setSubjects(event.target.value)}
-                placeholder="מתמטיקה, פיזיקה, אנגלית..."
+                placeholder="מתמטיקה, פיזיקה, אנגלית, נגינה..."
                 className={inputClassName}
               />
             </Field>
@@ -414,16 +648,38 @@ export function BusinessSpecificScreen({
                 dir="auto"
                 value={ageGroups}
                 onChange={(event) => setAgeGroups(event.target.value)}
-                placeholder="כיתות ד׳-י״ב, מבוגרים..."
+                placeholder="כיתות ד׳-י״ב, מבוגרים, גיל רך..."
                 className={inputClassName}
               />
             </Field>
             <RadioGroup
               name="session-format"
-              label="פגישות פנים אל פנים / אונליין / שניהם?"
+              label="פנים אל פנים / אונליין / שניהם?"
               options={["פנים אל פנים", "אונליין", "שניהם"]}
               value={sessionFormat}
               onChange={setSessionFormat}
+            />
+            <Field
+              id="student-achievements"
+              label="מה ההישגים הכי גדולים של תלמידים שלך?"
+            >
+              <textarea
+                id="student-achievements"
+                dir="auto"
+                value={studentAchievements}
+                onChange={(event) =>
+                  setStudentAchievements(event.target.value)
+                }
+                placeholder="למשל: עלה מ-60 ל-100 במתמטיקה, עבר בגרות בנגינה..."
+                rows={3}
+                className={textareaClassName}
+              />
+            </Field>
+            <Toggle
+              id="offers-free-trial"
+              label="האם אתה מציע שיעור ניסיון?"
+              checked={offersFreeTrial}
+              onChange={setOffersFreeTrial}
             />
           </>
         );
@@ -438,7 +694,7 @@ export function BusinessSpecificScreen({
                 dir="auto"
                 value={productCategories}
                 onChange={(event) => setProductCategories(event.target.value)}
-                placeholder="בגדי ילדים, אביזרי בית..."
+                placeholder="בגדי ילדים, תכשיטים, אביזרי בית..."
                 className={inputClassName}
               />
             </Field>
@@ -467,17 +723,35 @@ export function BusinessSpecificScreen({
       case "fitness":
         return (
           <>
-            <Field id="class-types" label="סוגי שיעורים" required>
+            <Field id="class-types" label="אילו שיעורים / תחומים?" required>
               <input
                 id="class-types"
                 type="text"
                 dir="auto"
                 value={classTypes}
                 onChange={(event) => setClassTypes(event.target.value)}
-                placeholder="יוגה, פילאטיס, TRX..."
+                placeholder="יוגה, פילאטיס, TRX, שיעורי ילדים..."
                 className={inputClassName}
               />
             </Field>
+            <Field id="age-groups-fitness" label="אילו גילאים?">
+              <input
+                id="age-groups-fitness"
+                type="text"
+                dir="auto"
+                value={ageGroups}
+                onChange={(event) => setAgeGroups(event.target.value)}
+                placeholder="מבוגרים, נוער, גיל רך..."
+                className={inputClassName}
+              />
+            </Field>
+            <RadioGroup
+              name="session-format-fitness"
+              label="פנים אל פנים / אונליין / שניהם?"
+              options={["פנים אל פנים", "אונליין", "שניהם"]}
+              value={sessionFormat}
+              onChange={setSessionFormat}
+            />
             <Field id="class-schedule" label="מתי השיעורים?">
               <input
                 id="class-schedule"
@@ -500,6 +774,28 @@ export function BusinessSpecificScreen({
                 className={inputClassName}
               />
             </Field>
+            <Field
+              id="student-achievements-fitness"
+              label="מה ההישגים / התוצאות של המתאמנים שלך?"
+            >
+              <textarea
+                id="student-achievements-fitness"
+                dir="auto"
+                value={studentAchievements}
+                onChange={(event) =>
+                  setStudentAchievements(event.target.value)
+                }
+                placeholder="למשל: 92% מהמתאמנים שיפרו גמישות, ירידה במשקל..."
+                rows={3}
+                className={textareaClassName}
+              />
+            </Field>
+            <Toggle
+              id="offers-free-trial-fitness"
+              label="האם אתה מציע שיעור ניסיון?"
+              checked={offersFreeTrial}
+              onChange={setOffersFreeTrial}
+            />
           </>
         );
 
@@ -530,6 +826,25 @@ export function BusinessSpecificScreen({
                 className={inputClassName}
               />
             </Field>
+            <Toggle
+              id="is-licensed-other"
+              label="האם יש לך הסמכה / רישיון מקצועי?"
+              checked={isLicensed}
+              onChange={setIsLicensed}
+            />
+            {isLicensed ? (
+              <Field id="license-number-other" label="פרטי הסמכה / רישיון">
+                <input
+                  id="license-number-other"
+                  type="text"
+                  dir="auto"
+                  value={licenseNumber}
+                  onChange={(event) => setLicenseNumber(event.target.value)}
+                  placeholder="תואר, רישיון, הסמכה..."
+                  className={inputClassName}
+                />
+              </Field>
+            ) : null}
           </>
         );
     }
@@ -538,19 +853,19 @@ export function BusinessSpecificScreen({
   const titles: Record<string, { title: string; subtitle: string }> = {
     restaurant: {
       title: "פרטים על המסעדה",
-      subtitle: "נשלב את זה באתר שלך",
+      subtitle: "תפריט, מטבח והזמנות — מה שלקוחות רוצים לראות",
     },
     beauty: {
       title: "פרטים על הסלון",
-      subtitle: "מחירון וצוות — מה שלקוחות רוצים לראות",
+      subtitle: "מחירון, תורים וצוות",
     },
     services: {
       title: "פרטים על השירות",
-      subtitle: "אזור פעילות והתמחות",
+      subtitle: "אזור פעילות, חירום והתמחות",
     },
     education: {
       title: "פרטים על ההוראה",
-      subtitle: "תחומים, גילאים ופורמט",
+      subtitle: "תחומים, גילאים והישגים",
     },
     retail: {
       title: "פרטים על החנות",
@@ -558,7 +873,7 @@ export function BusinessSpecificScreen({
     },
     fitness: {
       title: "פרטים על הסטודיו",
-      subtitle: "שיעורים, לוח זמנים ומחירים",
+      subtitle: "שיעורים, לוח זמנים ותוצאות",
     },
     other: {
       title: "ספר לנו עוד",
@@ -566,7 +881,20 @@ export function BusinessSpecificScreen({
     },
   };
 
+  const instagramLabels: Record<string, { label: string; hint?: string }> = {
+    beauty: {
+      label: "Instagram שלך",
+      hint: "קריטי לעסקי יופי — העבודות שלך מדברות בעד עצמן",
+    },
+    restaurant: {
+      label: "Instagram",
+      hint: "אם יש — נציג תמונות מהאינסטגרם שלך באתר",
+    },
+  };
+
   const copy = titles[businessType] ?? titles.other;
+  const instagramCopy =
+    instagramLabels[businessType] ?? { label: "Instagram" };
 
   return (
     <main className="flex min-h-[100svh] flex-col px-6 py-10">
@@ -602,7 +930,11 @@ export function BusinessSpecificScreen({
           <div className="flex flex-col gap-4">
             {renderTypeFields()}
 
-            <Field id="instagram-url" label="Instagram">
+            <Field
+              id="instagram-url"
+              label={instagramCopy.label}
+              hint={instagramCopy.hint}
+            >
               <input
                 id="instagram-url"
                 type="url"

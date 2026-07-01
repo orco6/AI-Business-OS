@@ -1,18 +1,23 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import "@fontsource-variable/heebo";
 import type { NavbarConfig, NavLink, WebsiteData } from "@/features/website/types";
 import { HeroSection } from "@/features/website/components/hero-section";
 import { NumbersSection } from "@/features/website/components/numbers-section";
 import { AboutSection } from "@/features/website/components/about-section";
+import {
+  BeforeAfterSection,
+  buildBeforeAfterSectionFromPhotos,
+} from "@/features/website/components/before-after-section";
 import { MenuSection } from "@/features/website/components/menu-section";
 import { ServicesSection } from "@/features/website/components/services-section";
 import { SocialProofSection } from "@/features/website/components/social-proof-section";
 import { GallerySection } from "@/features/website/components/gallery-section";
 import { ContactSection } from "@/features/website/components/contact-section";
+import { HamburgerMenu } from "@/features/website/components/hamburger-menu";
 import { StickyWhatsApp } from "@/features/website/components/sticky-whatsapp";
 
 const HEEBO = "'Heebo Variable', sans-serif";
@@ -28,6 +33,13 @@ function normalizeNavLink(link: NavLink | Record<string, string>): NavLink | nul
   const href = link.href ?? (link as Record<string, string>).Href ?? "";
   if (!label || !href) return null;
   return { label, href };
+}
+
+function hasBeforeAfterSection(websiteData: WebsiteData): boolean {
+  if ((websiteData.beforeAfter?.pairs.length ?? 0) > 0) return true;
+  return Object.keys(websiteData.photosByCategory).some((key) =>
+    key.startsWith("לפני - "),
+  );
 }
 
 function resolveNavbar(websiteData: WebsiteData): NavbarConfig {
@@ -48,6 +60,11 @@ function resolveNavbar(websiteData: WebsiteData): NavbarConfig {
   const built: NavLink[] = [];
   if (websiteData.menu) built.push({ label: "תפריט", href: "#menu" });
   built.push({ label: "עלינו", href: "#about" });
+  if (
+    hasBeforeAfterSection(websiteData)
+  ) {
+    built.push({ label: "לפני ואחרי", href: "#before-after" });
+  }
   if (websiteData.gallery.photoUrls.length > 0) {
     built.push({ label: "גלריה", href: "#gallery" });
   }
@@ -71,6 +88,9 @@ export function WebsiteRenderer({ websiteData }: WebsiteRendererProps) {
   const navLockRef = useRef(false);
   const { theme } = websiteData;
   const navbar = resolveNavbar(websiteData);
+  const beforeAfterSection =
+    websiteData.beforeAfter ??
+    buildBeforeAfterSectionFromPhotos(websiteData.photosByCategory);
 
   const openMenu = useCallback(() => {
     setMenuKey((k) => k + 1);
@@ -158,6 +178,9 @@ export function WebsiteRenderer({ websiteData }: WebsiteRendererProps) {
         about={websiteData.about}
         photosByCategory={websiteData.photosByCategory}
       />
+      {beforeAfterSection && (
+        <BeforeAfterSection section={beforeAfterSection} />
+      )}
       {websiteData.menu && (
         <MenuSection
           menu={websiteData.menu}
@@ -176,144 +199,16 @@ export function WebsiteRenderer({ websiteData }: WebsiteRendererProps) {
       )}
 
       <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            key={menuKey}
-            role="dialog"
-            aria-modal="true"
-            aria-label="תפריט ניווט"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 999999,
-              opacity: 1,
-              background:
-                "linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(20,20,30,0.95) 100%)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setMenuOpen(false)}
-              aria-label="סגור תפריט"
-              style={{
-                position: "absolute",
-                top: "24px",
-                left: "24px",
-                width: "44px",
-                height: "44px",
-                borderRadius: "50%",
-                border: "1px solid rgba(255,255,255,0.2)",
-                background: "transparent",
-                color: "white",
-                fontSize: "18px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                touchAction: "manipulation",
-              }}
-            >
-              ✕
-            </button>
-
-            <nav
-              aria-label="קישורי ניווט"
-              style={{
-                position: "relative",
-                zIndex: 1,
-                display: "flex",
-                flexDirection: "column",
-                gap: 0,
-                width: "100%",
-                padding: "0 2.5rem",
-                textAlign: "right",
-              }}
-            >
-              {navbar.links.map((link, index) => (
-                <Fragment key={`${link.href}-${index}`}>
-                  {index > 0 && (
-                    <div
-                      aria-hidden="true"
-                      style={{
-                        height: "1px",
-                        backgroundColor: "rgba(255,255,255,0.08)",
-                        margin: "0.5rem 0",
-                      }}
-                    />
-                  )}
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      if (link.href.startsWith("#")) {
-                        e.preventDefault();
-                        handleNavClick(link.href);
-                      } else {
-                        setMenuOpen(false);
-                      }
-                    }}
-                    style={{
-                      color: "#ffffff",
-                      fontSize: "2.5rem",
-                      fontWeight: 900,
-                      textDecoration: "none",
-                      letterSpacing: "-0.02em",
-                      fontFamily: "var(--font-heading)",
-                      padding: "0.5rem 0",
-                      display: "block",
-                      touchAction: "manipulation",
-                      WebkitTapHighlightColor: "transparent",
-                    }}
-                  >
-                    {link.label}
-                  </a>
-                </Fragment>
-              ))}
-            </nav>
-
-            <a
-              href={navbar.ctaHref}
-              onClick={(e) => {
-                if (navbar.ctaHref.startsWith("#")) {
-                  e.preventDefault();
-                  handleNavClick(navbar.ctaHref);
-                } else {
-                  setMenuOpen(false);
-                }
-              }}
-              target={navbar.ctaHref.startsWith("http") ? "_blank" : undefined}
-              rel={navbar.ctaHref.startsWith("http") ? "noopener noreferrer" : undefined}
-              style={{
-                position: "absolute",
-                bottom: "3rem",
-                zIndex: 1,
-                backgroundColor: "var(--color-primary)",
-                color: "white",
-                padding: "1rem 3rem",
-                borderRadius: "9999px",
-                fontSize: "1.1rem",
-                fontWeight: 700,
-                textDecoration: "none",
-                touchAction: "manipulation",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-              }}
-            >
-              {navbar.ctaText}
-            </a>
-          </motion.div>
-        )}
+        {menuOpen ? (
+          <HamburgerMenu
+            menuKey={menuKey}
+            navbar={navbar}
+            contact={websiteData.contact}
+            instagramUrl={websiteData.instagramUrl}
+            onClose={() => setMenuOpen(false)}
+            onNavClick={handleNavClick}
+          />
+        ) : null}
       </AnimatePresence>
     </div>
   );

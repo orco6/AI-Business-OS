@@ -4,6 +4,14 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Api.Features.Onboarding;
 
+public class ProfileMenuItem
+{
+    public string Category { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Price { get; set; } = string.Empty;
+}
+
 public class BusinessProfile
 {
     [BsonId]
@@ -40,9 +48,15 @@ public class BusinessProfile
 
     // Restaurant
     public string MenuUrl { get; set; } = string.Empty;
+    public string MenuDisplayMode { get; set; } = string.Empty;
+    public string MenuTypes { get; set; } = string.Empty;
+    public string RestaurantHighlights { get; set; } = string.Empty;
+    public string ExtraServices { get; set; } = string.Empty;
     public bool HasReservations { get; set; }
     public string ReservationLink { get; set; } = string.Empty;
     public string CuisineType { get; set; } = string.Empty;
+    public List<string> MenuPhotos { get; set; } = new();
+    public List<ProfileMenuItem> MenuItems { get; set; } = new();
 
     // Beauty / Barber
     public string PricingList { get; set; } = string.Empty;
@@ -50,13 +64,18 @@ public class BusinessProfile
 
     // Services
     public bool Emergency24_7 { get; set; }
+    public string EmergencyHours { get; set; } = string.Empty;
+    public bool IsLicensed { get; set; }
     public string LicenseNumber { get; set; } = string.Empty;
     public string Specialization { get; set; } = string.Empty;
+    public string BookingLink { get; set; } = string.Empty;
 
     // Education
     public string Subjects { get; set; } = string.Empty;
     public string AgeGroups { get; set; } = string.Empty;
     public string SessionFormat { get; set; } = string.Empty;
+    public string StudentAchievements { get; set; } = string.Empty;
+    public bool OffersFreeTrial { get; set; }
 
     // Retail
     public string ProductCategories { get; set; } = string.Empty;
@@ -79,5 +98,6 @@ public class BusinessProfile
     public string SpecialAchievement { get; set; } = string.Empty;
 
     public Dictionary<string, List<string>> PhotosByCategory { get; set; } = new();
+    public string HeroPhotoUrl { get; set; } = string.Empty;
     public WebsiteData? WebsiteData { get; set; }
 }

@@ -4,6 +4,7 @@ export type HeroSection = {
   ctaText: string;
   ctaAction: string;
   backgroundImageCategory: string;
+  heroPhotoUrl?: string;
 };
 
 export type AboutSection = {
@@ -76,7 +77,9 @@ export type StatItem = {
 
 export type MenuSection = {
   title: string;
+  displayMode?: "photos" | "manual" | "url" | "";
   menuUrl: string;
+  menuPhotos: string[];
   categories: MenuCategory[];
   hasReservations: boolean;
   reservationLink: string;
@@ -92,6 +95,17 @@ export type MenuItem = {
   name: string;
   description: string;
   price: string;
+};
+
+export type BeforeAfterPair = {
+  beforeUrl: string;
+  afterUrl: string;
+  label?: string;
+};
+
+export type BeforeAfterSection = {
+  title: string;
+  pairs: BeforeAfterPair[];
 };
 
 export type NavLink = {
@@ -120,6 +134,7 @@ export type WebsiteData = {
   socialProof?: SocialProofSection;
   numbers?: NumbersSection;
   menu?: MenuSection;
+  beforeAfter?: BeforeAfterSection;
   navbar?: NavbarConfig;
   instagramUrl?: string;
 };

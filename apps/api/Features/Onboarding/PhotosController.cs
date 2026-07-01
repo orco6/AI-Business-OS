@@ -23,7 +23,8 @@ public class PhotosController : ControllerBase
 
         await _onboardingService.UpdatePhotosAsync(
             request.ProfileId,
-            request.PhotosByCategory ?? new());
+            request.PhotosByCategory ?? new(),
+            request.HeroPhotoUrl ?? "");
 
         return Ok(new { status = "ok" });
     }
@@ -33,4 +34,5 @@ public sealed class UpdatePhotosRequest
 {
     public string? ProfileId { get; set; }
     public Dictionary<string, List<string>>? PhotosByCategory { get; set; }
+    public string? HeroPhotoUrl { get; set; }
 }

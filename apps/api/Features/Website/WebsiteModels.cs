@@ -16,6 +16,7 @@ public class WebsiteData
     public SocialProofSection? SocialProof { get; set; }
     public NumbersSection? Numbers { get; set; }
     public MenuSection? Menu { get; set; }
+    public BeforeAfterSection? BeforeAfter { get; set; }
     public NavbarConfig Navbar { get; set; } = new();
     public string InstagramUrl { get; set; } = string.Empty;
 }
@@ -27,6 +28,7 @@ public class HeroSection
     public string CtaText { get; set; } = string.Empty;
     public string CtaAction { get; set; } = string.Empty;
     public string BackgroundImageCategory { get; set; } = string.Empty;
+    public string HeroPhotoUrl { get; set; } = string.Empty;
 }
 
 public class AboutSection
@@ -115,7 +117,9 @@ public class StatItem
 public class MenuSection
 {
     public string Title { get; set; } = "התפריט שלנו";
+    public string DisplayMode { get; set; } = string.Empty;
     public string MenuUrl { get; set; } = string.Empty;
+    public List<string> MenuPhotos { get; set; } = new();
     public List<MenuCategory> Categories { get; set; } = new();
     public bool HasReservations { get; set; }
     public string ReservationLink { get; set; } = string.Empty;
@@ -133,6 +137,19 @@ public class MenuItem
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Price { get; set; } = string.Empty;
+}
+
+public class BeforeAfterSection
+{
+    public string Title { get; set; } = "לפני ואחרי";
+    public List<BeforeAfterPair> Pairs { get; set; } = new();
+}
+
+public class BeforeAfterPair
+{
+    public string BeforeUrl { get; set; } = string.Empty;
+    public string AfterUrl { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 }
 
 public class NavbarConfig

@@ -71,7 +71,8 @@
   - שלב 2.5: שאלת העמקה AI (DeepQuestionScreen)
   - שלב 3: קטגוריות (CategoriesScreen, רק אם plan.needsCategories)
   - שלב 3.5: העלאת תמונות (PhotosUploadScreen — קטגוריות לפי סוג עסק + לפני/אחרי ליופי/שירותים ויזואליים)
-  - שלב 3.6: שאלות ספציפיות לסוג עסק (BusinessSpecificScreen — תפריט, מחירון, אזור שירות, Instagram וכו')
+  - שלב 3.6: שאלות ספציפיות לסוג עסק (BusinessSpecificScreen — DNA לפי סוג: תפריט/מטבח/הזמנות, מחירון/תורים, אזור/חירום/רישיון, Instagram וכו')
+  - שלב 3.65: העלאת תפריט (MenuUploadScreen — רק למסעדות: תמונות תפריט או הזנה ידנית לפי menuDisplayMode)
   - שלב 3.7: פרטי קשר (ContactDetailsScreen — טלפון, WhatsApp, כתובת, שעות, שם בעל עסק)
   - שלב 3.8: הוכחה חברתית (SocialProofScreen — screenshots המלצות + סטטיסטיקות)
   - שלב 4: Welcome screen עם הודעה אישית מ-Claude
@@ -85,6 +86,7 @@
 - `apps/web/features/onboarding/components/categories-screen.tsx` - קטגוריות
 - `apps/web/features/onboarding/components/photos-upload-screen.tsx` - תמונות (+ לפני/אחרי)
 - `apps/web/features/onboarding/components/business-specific-screen.tsx` - שאלות לפי סוג עסק
+- `apps/web/features/onboarding/components/menu-upload-screen.tsx` - תפריט (תמונות / הזנה ידנית)
 - `apps/web/features/onboarding/components/contact-details-screen.tsx` - פרטי קשר
 - `apps/web/features/onboarding/components/social-proof-screen.tsx` - המלצות לקוחות
 - `apps/web/features/onboarding/components/welcome-screen.tsx` - Welcome
@@ -94,7 +96,7 @@
 - `apps/web/app/dashboard/page.tsx` - Dashboard
 - `apps/web/app/preview/[profileId]/page.tsx` - Preview page (fetch/generate WebsiteData)
 - `apps/web/app/preview/[profileId]/website-renderer.tsx` - Client renderer + theme/fonts
-- `apps/web/features/website/components/` - Hero (hamburger nav), Numbers, About, Menu, Services, SocialProof, Gallery, Contact, StickyWhatsApp
+- `apps/web/features/website/components/` - Hero (hamburger nav), Numbers, About, BeforeAfter, Menu, Services, SocialProof, Gallery, Contact, StickyWhatsApp
 - `apps/web/features/website/types.ts` - WebsiteData TypeScript types
 - `apps/web/app/providers.tsx` - SessionProvider
 
@@ -312,8 +314,17 @@ Welcome + Claude message
 - ✅ Section anchor IDs: #about, #menu, #gallery, #contact
 - ✅ Visual review fixes: Hero RTL nav (hamburger right), Numbers CSS fade (Safari), SocialProof layout + mobile scroll, Menu padding
 - ✅ Hamburger menu overlay: slide-in + staggered link animations, glassmorphism background, premium typography/separators, smooth scroll-to-section on nav click
+- ✅ **Step 1 — BusinessSpecificScreen:** שאלות ספציפיות לפי DNA עסק (מסעדה: סוג מטבח, סוגי תפריט, אופן הצגת תפריט, דגשים, חדר פרטי/קייטרינג; יופי: מחירון, איך קובעים תור, צוות; שירותים: אזור, חירום+שעות, רישיון; כושר: שיעורים, הישגים, שיעור ניסיון; אחר: הסמכה). שדות חדשים נשמרים ב-BusinessProfile.
+- ✅ **Step 2 — MenuUploadScreen:** שלב 3.65 לאחר BusinessSpecific — רק למסעדות עם menuDisplayMode "העלה תמונות" / "הזן מנות ידנית". מצב תמונות: עד 20 תמונות → Cloudinary. מצב ידני: טאבים לפי קטגוריה, שם+תיאור+מחיר. נשמר ב-BusinessProfile.MenuPhotos / MenuItems.
+- ✅ **Step 3 — BeforeAfterSection:** קומפוננטת slider CSS-only (clip-path + range input), עד 4 זוגות בגריד, תוויות לפני/אחרי, touch+mouse. `buildBeforeAfterSectionFromPhotos()` מזוגות `לפני - X` / `אחרי - X` ב-photosByCategory. מוצג ב-renderer אחרי About כשיש נתונים.
+- ✅ **Step 4 — MenuSection (3 modes):** תמונות (גריד + lightbox swipeable), ידני (tabs + מנות), URL (כפתור + iframe overlay). לא מוצג בלי נתונים. WebsiteService בונה categories מ-MenuItems + MenuPhotos/DisplayMode.
+- ✅ **Step 5 — WebsiteService DNA:** prompt מעודכן (headline=שם עסק, subheadline רגשי, בלי להמציא תוכן), DNA לפי סוג עסק (CTA, services מ-pricingList/classTypes/keyFeatures), BeforeAfter מ-photos, navbar דינמי, gallery מסנן תפריט/לפני-אחרי.
+- ✅ **Step 6 — HeroSection:** שם העסק כ-h1 (typography editorial גדול), subheadline רגשי מתחת, CTA יחיד מ-navbar DNA (הזמן מקום / קבע תור / התקשר וכו').
+- ✅ **Step 7 — HamburgerMenu:** קומפוננטה נפרדת, קישורים מ-navbar DNA, footer עם טלפון/Instagram/שעות, CTA מלא רוחב, staggered animations, glassmorphism.
+- ✅ **Step 8 — heroPhotoUrl:** סימון תמונת Hero ב-PhotosUploadScreen, שמירה ב-BusinessProfile + WebsiteData.Hero.HeroPhotoUrl, HeroSection משתמש בה ראשון.
 
-### מה נשאר - Sprint 10:
+### מה נשאר - Sprint 10 (Master Prompt):
+- Build סופי: `npm run build` + `dotnet build`
 - שיפור ויזואלי מעמיק של כל הקומפוננטות
 - About section: layout חזק יותר
 - Services: cards עם יותר character

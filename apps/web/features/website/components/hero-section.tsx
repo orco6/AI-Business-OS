@@ -30,9 +30,12 @@ const DEFAULT_NAVBAR: NavbarConfig = {
 };
 
 function getHeroBackground(
+  heroPhotoUrl: string | undefined,
   category: string,
   photosByCategory: Record<string, string[]>,
 ): string | null {
+  if (heroPhotoUrl) return heroPhotoUrl;
+
   if (!category) return null;
 
   const exact = photosByCategory[category];
@@ -73,6 +76,7 @@ export function HeroSection({
   const [scrolled, setScrolled] = useState(false);
 
   const backgroundUrl = getHeroBackground(
+    hero.heroPhotoUrl,
     hero.backgroundImageCategory,
     photosByCategory,
   );
@@ -99,6 +103,13 @@ export function HeroSection({
   };
 
   const navTextClass = scrolled ? "text-[var(--color-text)]" : "text-white";
+
+  const displayName = businessName.trim() || hero.headline.trim();
+  const tagline = hero.subheadline.trim();
+  const primaryCtaText = navbar.ctaText || hero.ctaText;
+  const primaryCtaHref =
+    navbar.ctaHref ||
+    buildCtaHref(hero.ctaAction, whatsApp, phone);
 
   return (
     <section className="relative h-dvh min-h-0 sm:min-h-[600px]">
@@ -234,36 +245,43 @@ export function HeroSection({
         />
 
         <h1
-          className="max-w-3xl text-right text-6xl font-bold leading-[1.1] tracking-[-0.02em] text-white sm:text-7xl md:text-8xl"
+          className="max-w-4xl text-right text-5xl font-black leading-[1.05] tracking-[-0.03em] text-white sm:text-7xl md:text-8xl lg:text-[7rem]"
           style={{
             fontFamily: "var(--font-heading)",
-            textShadow: "0 4px 30px rgba(0,0,0,0.4)",
+            textShadow: "0 4px 30px rgba(0,0,0,0.45)",
           }}
         >
-          {hero.headline}
+          {displayName}
         </h1>
 
-        <p
-          className="ms-auto me-0 mt-6 max-w-xl text-right text-xl font-normal leading-[1.6] text-white/85 sm:text-2xl"
-          style={{ direction: "rtl" }}
-        >
-          {hero.subheadline}
-        </p>
+        {tagline ? (
+          <p
+            className="ms-auto me-0 mt-5 max-w-xl text-right text-lg font-normal leading-[1.55] text-white/80 sm:mt-6 sm:text-xl md:text-2xl"
+          >
+            {tagline}
+          </p>
+        ) : null}
 
-        {hero.ctaText && (
-          <div className="mt-10 flex justify-end">
+        {primaryCtaText ? (
+          <div className="mt-8 flex justify-end sm:mt-10">
             <a
-              href={buildCtaHref(hero.ctaAction, whatsApp, phone)}
-              className="inline-block rounded-full px-8 py-4 text-lg font-semibold text-white transition-all duration-500 ease-out hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white sm:px-10 sm:py-5 sm:text-xl"
+              href={primaryCtaHref}
+              target={primaryCtaHref.startsWith("http") ? "_blank" : undefined}
+              rel={
+                primaryCtaHref.startsWith("http")
+                  ? "noopener noreferrer"
+                  : undefined
+              }
+              className="inline-block rounded-full px-8 py-4 text-base font-bold text-white transition-all duration-500 ease-out hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white sm:px-10 sm:py-5 sm:text-lg"
               style={{
                 backgroundColor: "var(--color-primary)",
                 boxShadow: `0 8px 32px ${theme.primaryColor}66`,
               }}
             >
-              {hero.ctaText}
+              {primaryCtaText}
             </a>
           </div>
-        )}
+        ) : null}
       </motion.div>
 
       {!scrolled && (

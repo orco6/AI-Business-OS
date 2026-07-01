@@ -15,6 +15,11 @@ import {
   type ContactDetails,
 } from "@/features/onboarding/components/contact-details-screen";
 import { DeepQuestionScreen } from "@/features/onboarding/components/deep-question-screen";
+import {
+  MenuUploadScreen,
+  needsMenuUploadScreen,
+  type MenuUploadData,
+} from "@/features/onboarding/components/menu-upload-screen";
 import { PhotosUploadScreen } from "@/features/onboarding/components/photos-upload-screen";
 import {
   SocialProofScreen,
@@ -95,8 +100,12 @@ export default function OnboardingPage() {
   const [uploadedPhotos, setUploadedPhotos] = useState<Record<string, string[]>>(
     {},
   );
+  const [heroPhotoUrl, setHeroPhotoUrl] = useState("");
   const [businessSpecificData, setBusinessSpecificData] =
     useState<BusinessSpecificData | null>(null);
+  const [menuUploadData, setMenuUploadData] = useState<MenuUploadData | null>(
+    null,
+  );
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(
     null,
   );
@@ -119,10 +128,14 @@ export default function OnboardingPage() {
     photosParam?: Record<string, string[]>,
     screenshots?: string[],
     stats?: BusinessStats | null,
+    menuData?: MenuUploadData | null,
+    heroPhotoParam?: string,
   ) {
     setIsLoading(true);
     const contact = details ?? contactDetails;
     const specific = specificData ?? businessSpecificData;
+    const menu = menuData ?? menuUploadData;
+    const heroPhoto = heroPhotoParam ?? heroPhotoUrl;
     try {
       const response = await fetch(
         "http://localhost:5063/api/onboarding/start",
@@ -151,19 +164,30 @@ export default function OnboardingPage() {
             hours: contact?.hours ?? "",
             ownerName: contact?.ownerName ?? "",
             menuUrl: specific?.menuUrl ?? "",
+            menuDisplayMode: specific?.menuDisplayMode ?? "",
+            menuTypes: specific?.menuTypes ?? "",
+            restaurantHighlights: specific?.restaurantHighlights ?? "",
+            extraServices: specific?.extraServices ?? "",
             hasReservations: specific?.hasReservations ?? false,
             reservationLink: specific?.reservationLink ?? "",
             cuisineType: specific?.cuisineType ?? "",
+            menuPhotos: menu?.menuPhotos ?? [],
+            menuItems: menu?.menuItems ?? [],
             pricingList: specific?.pricingList ?? "",
             bookingMethod: specific?.bookingMethod ?? "",
+            bookingLink: specific?.bookingLink ?? "",
             teamSize: specific?.teamSize ?? "",
             serviceArea: specific?.serviceArea ?? "",
             emergency24_7: specific?.emergency24_7 ?? false,
+            emergencyHours: specific?.emergencyHours ?? "",
+            isLicensed: specific?.isLicensed ?? false,
             licenseNumber: specific?.licenseNumber ?? "",
             specialization: specific?.specialization ?? "",
             subjects: specific?.subjects ?? "",
             ageGroups: specific?.ageGroups ?? "",
             sessionFormat: specific?.sessionFormat ?? "",
+            studentAchievements: specific?.studentAchievements ?? "",
+            offersFreeTrial: specific?.offersFreeTrial ?? false,
             productCategories: specific?.productCategories ?? "",
             hasOnlineStore: specific?.hasOnlineStore ?? false,
             onlineStoreUrl: specific?.onlineStoreUrl ?? "",
@@ -177,6 +201,7 @@ export default function OnboardingPage() {
             clientsServed: stats?.clientsServed ?? businessStats?.clientsServed ?? "",
             specialAchievement:
               stats?.specialAchievement ?? businessStats?.specialAchievement ?? "",
+            heroPhotoUrl: heroPhoto,
           }),
         },
       );
@@ -223,6 +248,7 @@ export default function OnboardingPage() {
               body: JSON.stringify({
                 profileId: data.profileId,
                 photosByCategory: urlsByCategory,
+                heroPhotoUrl: heroPhoto,
               }),
             });
           }
@@ -371,6 +397,28 @@ export default function OnboardingPage() {
     );
   }
 
+  if (step === 3.65 && businessSpecificData?.menuDisplayMode) {
+    return (
+      <div className="relative">
+        <MenuUploadScreen
+          menuDisplayMode={businessSpecificData.menuDisplayMode}
+          menuTypes={businessSpecificData.menuTypes}
+          profileId={profileId}
+          onNext={(data) => {
+            setMenuUploadData(data);
+            setStep(3.7);
+          }}
+          onSkip={() => setStep(3.7)}
+        />
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+            <p className="text-base font-medium text-muted-foreground">רגע...</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (step === 3.6) {
     return (
       <div className="relative">
@@ -378,7 +426,11 @@ export default function OnboardingPage() {
           businessType={businessType}
           onNext={(data) => {
             setBusinessSpecificData(data);
-            setStep(3.7);
+            setStep(
+              needsMenuUploadScreen(businessType, data.menuDisplayMode)
+                ? 3.65
+                : 3.7,
+            );
           }}
           onSkip={() => setStep(3.7)}
         />
@@ -423,8 +475,9 @@ export default function OnboardingPage() {
           beforeAfterCategories={beforeAfterCategories}
           businessName={businessName}
           profileId={profileId}
-          onNext={(photos) => {
+          onNext={(photos, heroUrl) => {
             setUploadedPhotos(photos);
+            setHeroPhotoUrl(heroUrl ?? "");
             setStep(3.6);
           }}
           onSkip={() => setStep(3.6)}

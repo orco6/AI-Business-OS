@@ -14,15 +14,31 @@ import {
 
 const MAX_PHOTOS_PER_CATEGORY = 10;
 
+type HeroSelection = {
+  category: string;
+  index: number;
+};
+
 type PhotosUploadScreenProps = {
   categories: string[];
   businessType: string;
   beforeAfterCategories: string[];
   businessName: string;
   profileId: string;
-  onNext: (uploadedPhotos: Record<string, string[]>) => void;
+  onNext: (
+    uploadedPhotos: Record<string, string[]>,
+    heroPhotoUrl?: string,
+  ) => void;
   onSkip: () => void;
 };
+
+function isBeforeAfterCategory(category: string): boolean {
+  return (
+    category.startsWith("לפני - ") ||
+    category.startsWith("אחרי - ") ||
+    category.includes("לפני ואחרי")
+  );
+}
 
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -45,6 +61,9 @@ function CategoryUploadArea({
   photos,
   dragOverCategory,
   inputRefs,
+  heroSelection,
+  allowHeroSelection,
+  onMarkHero,
   onDragOver,
   onDragLeave,
   onDrop,
@@ -54,6 +73,9 @@ function CategoryUploadArea({
   photos: string[];
   dragOverCategory: string | null;
   inputRefs: MutableRefObject<Record<string, HTMLInputElement | null>>;
+  heroSelection: HeroSelection | null;
+  allowHeroSelection: boolean;
+  onMarkHero: (category: string, index: number) => void;
   onDragOver: (category: string, event: DragEvent<HTMLDivElement>) => void;
   onDragLeave: (event: DragEvent<HTMLDivElement>) => void;
   onDrop: (category: string, event: DragEvent<HTMLDivElement>) => void;
@@ -114,23 +136,61 @@ function CategoryUploadArea({
       />
 
       {photos.length > 0 ? (
-        <ul
-          className="mt-3 flex flex-wrap gap-2"
-          aria-label={`תצוגה מקדימה - ${category}`}
-        >
-          {photos.map((photo, index) => (
-            <li key={`${category}-${index}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo}
-                alt={`${category} ${index + 1}`}
-                className="size-20 rounded-lg object-cover"
-                width={80}
-                height={80}
-              />
-            </li>
-          ))}
-        </ul>
+        <>
+          {allowHeroSelection ? (
+            <p className="mt-3 text-xs text-muted-foreground">
+              לחץ על תמונה לסימון כתמונת Hero לראש העמוד
+            </p>
+          ) : null}
+          <ul
+            className="mt-2 flex flex-wrap gap-2"
+            aria-label={`תצוגה מקדימה - ${category}`}
+          >
+            {photos.map((photo, index) => {
+              const isHero =
+                heroSelection?.category === category &&
+                heroSelection.index === index;
+
+              return (
+                <li key={`${category}-${index}`}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (allowHeroSelection) onMarkHero(category, index);
+                    }}
+                    className={cn(
+                      "relative overflow-hidden rounded-lg",
+                      allowHeroSelection && "cursor-pointer",
+                      isHero && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                    )}
+                    aria-label={
+                      allowHeroSelection
+                        ? isHero
+                          ? `תמונת Hero — ${category} ${index + 1}`
+                          : `סמן כתמונת Hero — ${category} ${index + 1}`
+                        : `${category} ${index + 1}`
+                    }
+                    aria-pressed={allowHeroSelection ? isHero : undefined}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={photo}
+                      alt={`${category} ${index + 1}`}
+                      className="size-20 object-cover"
+                      width={80}
+                      height={80}
+                    />
+                    {isHero ? (
+                      <span className="absolute inset-x-0 bottom-0 bg-primary px-1 py-0.5 text-center text-[10px] font-semibold text-primary-foreground">
+                        Hero
+                      </span>
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       ) : null}
     </section>
   );
@@ -170,6 +230,9 @@ export function PhotosUploadScreen({
   >(() =>
     Object.fromEntries(allUploadCategories.map((category) => [category, []])),
   );
+  const [heroSelection, setHeroSelection] = useState<HeroSelection | null>(
+    null,
+  );
   const [isUploading, setIsUploading] = useState(false);
   const [dragOverCategory, setDragOverCategory] = useState<string | null>(
     null,
@@ -189,11 +252,42 @@ export function PhotosUploadScreen({
       const remaining = MAX_PHOTOS_PER_CATEGORY - current.length;
       if (remaining <= 0) return prev;
 
+      const nextPhotos = [...current, ...dataUrls.slice(0, remaining)];
+
+      if (
+        !isBeforeAfterCategory(category) &&
+        !heroSelection &&
+        nextPhotos.length > 0
+      ) {
+        setHeroSelection({ category, index: 0 });
+      }
+
       return {
         ...prev,
-        [category]: [...current, ...dataUrls.slice(0, remaining)],
+        [category]: nextPhotos,
       };
     });
+  }
+
+  function markHero(category: string, index: number) {
+    if (isBeforeAfterCategory(category)) return;
+    setHeroSelection({ category, index });
+  }
+
+  function resolveHeroPhotoUrl(
+    urlsByCategory: Record<string, string[]>,
+  ): string | undefined {
+    if (heroSelection) {
+      const url = urlsByCategory[heroSelection.category]?.[heroSelection.index];
+      if (url) return url;
+    }
+
+    for (const category of regularCategories) {
+      const first = urlsByCategory[category]?.[0];
+      if (first) return first;
+    }
+
+    return undefined;
   }
 
   async function handleFilesSelected(
@@ -249,7 +343,7 @@ export function PhotosUploadScreen({
       );
 
       const urlsByCategory = Object.fromEntries(uploadEntries);
-      onNext(urlsByCategory);
+      onNext(urlsByCategory, resolveHeroPhotoUrl(urlsByCategory));
     } finally {
       setIsUploading(false);
     }
@@ -294,6 +388,9 @@ export function PhotosUploadScreen({
                 photos={photosByCategory[category] ?? []}
                 dragOverCategory={dragOverCategory}
                 inputRefs={inputRefs}
+                heroSelection={heroSelection}
+                allowHeroSelection
+                onMarkHero={markHero}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -317,6 +414,9 @@ export function PhotosUploadScreen({
                         photos={photosByCategory[beforeKey] ?? []}
                         dragOverCategory={dragOverCategory}
                         inputRefs={inputRefs}
+                        heroSelection={heroSelection}
+                        allowHeroSelection={false}
+                        onMarkHero={markHero}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
@@ -327,6 +427,9 @@ export function PhotosUploadScreen({
                         photos={photosByCategory[afterKey] ?? []}
                         dragOverCategory={dragOverCategory}
                         inputRefs={inputRefs}
+                        heroSelection={heroSelection}
+                        allowHeroSelection={false}
+                        onMarkHero={markHero}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
